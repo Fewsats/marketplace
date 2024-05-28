@@ -3,6 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 // TYPES
 import { FileObject } from '@/app/types';
+// UTILS
+import formatPrice from '@/app/utils/formatPrice';
 
 export default function FileCard({ file }: { file: FileObject }) {
   return (
@@ -50,10 +52,7 @@ export default function FileCard({ file }: { file: FileObject }) {
           <span
             className={'ml-2 text-base font-semibold leading-6 text-zinc-950'}
           >
-            {`$${Math.round(file.price_in_usd_cents / 100)
-              .toFixed(2)
-              .toString()
-              .replace('.00', '')}`}
+            {formatPrice(file.price_in_usd_cents)}
           </span>
         </div>
       </div>

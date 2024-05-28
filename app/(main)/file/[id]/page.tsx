@@ -10,9 +10,11 @@ import { getFileDetails } from '@/app/store/storageSlice';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeftIcon } from '@heroicons/react/20/solid';
+import PrimaryButton from '@/app/components/buttons/PrimaryButton';
 // TYPES
 import { StorageState } from '@/app/types';
-import PrimaryButton from '@/app/components/buttons/PrimaryButton';
+// UTILS
+import formatPrice from '@/app/utils/formatPrice';
 
 const FilePage = ({ params }: { params: { id: string } }) => {
   const id = params.id;
@@ -85,10 +87,7 @@ const FilePage = ({ params }: { params: { id: string } }) => {
               'ml-2 text-lg font-semibold leading-6 text-zinc-950 sm:text-xl'
             }
           >
-            {`$${Math.round(100 / 100)
-              .toFixed(2)
-              .toString()
-              .replace('.00', '')}`}
+            {formatPrice(100)}
           </span>
         </div>
         <div
@@ -153,7 +152,7 @@ const FilePage = ({ params }: { params: { id: string } }) => {
               </div>
             </div>
             <div className={'w-full'}>
-              <PrimaryButton buttonText={'Buy'} />
+              <PrimaryButton buttonText={'Buy'} link={`/billing/${'test'}`} />
             </div>
           </div>
         </div>
