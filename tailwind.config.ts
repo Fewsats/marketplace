@@ -23,7 +23,7 @@ const config: Config = {
         '60': '60',
       },
       maxWidth: {
-        'max-w-1440': '1440px',
+        'screen-1xl': '1440px',
       },
     },
   },

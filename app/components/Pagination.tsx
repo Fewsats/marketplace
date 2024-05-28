@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
+// UTILS
 import { useWindowSize } from '@/app/utils/useWindowSize';
+// COMPONENTS
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,

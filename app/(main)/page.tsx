@@ -22,7 +22,7 @@ import {
 // UTILS
 import debounce from 'lodash.debounce';
 
-const Marketplace = () => {
+const MarketplacePage = () => {
   const dispatchThunk = useAppThunkDispatch();
   const dispatch = useAppDispatch();
   const data = useSelector(
@@ -101,7 +101,7 @@ const Marketplace = () => {
         />
         <div
           className={
-            'max-w-1440 relative flex w-full flex-col items-center px-14 pb-64 pt-8'
+            'relative mx-auto flex w-full max-w-screen-1xl flex-col items-center px-4 pb-64 pt-8 md:px-14'
           }
         >
           <div className={'mb-10 flex w-full justify-start'}>
@@ -113,7 +113,11 @@ const Marketplace = () => {
               className={'h-auto w-32'}
             />
           </div>
-          <h1 className={'mb-5 text-5xl font-bold text-white'}>
+          <h1
+            className={
+              'mb-5 text-3xl font-bold text-white sm:text-4xl md:text-5xl'
+            }
+          >
             Files catalog
           </h1>
           <form
@@ -156,7 +160,11 @@ const Marketplace = () => {
         </div>
       </div>
       {!!data?.files && (
-        <div className={'max-w-1440 relative -mt-60 w-full px-14 pb-7'}>
+        <div
+          className={
+            'relative mx-auto -mt-60 w-full max-w-screen-1xl px-4 pb-7 md:px-14'
+          }
+        >
           <FilesList files={filteredValues} />
         </div>
       )}
@@ -164,4 +172,4 @@ const Marketplace = () => {
   );
 };
 
-export default Marketplace;
+export default MarketplacePage;
