@@ -20,3 +20,8 @@ export interface StorageState {
 export interface ApplicationState {
   loader: boolean;
 }
+
+export interface Option {
+  name: string;
+  id: string;
+}

@@ -36,10 +36,20 @@ export default function FilesList({ files }: { files: FileObject[] }) {
   }, [files, columns, rows, page]);
 
   const count = useMemo(() => files.length, [files]);
-  const pages = useMemo(
-    () => Math.ceil(files.length / (rows * columns)),
-    [files, rows, columns]
-  );
+  const limit = useMemo(() => {
+    if (columns && rows) {
+      return columns * rows;
+    } else {
+      return 0;
+    }
+  }, [columns, rows]);
+  const pages = useMemo(() => {
+    if (rows && columns) {
+      return Math.ceil(files.length / (rows * columns));
+    } else {
+      return 0;
+    }
+  }, [files, rows, columns]);
 
   const onNext = () => {
     setPage((state) => state + 1);
@@ -49,7 +59,7 @@ export default function FilesList({ files }: { files: FileObject[] }) {
     setPage((state) => state - 1);
   };
 
-  const onClick = (page) => () => {
+  const onClick = (page: number) => () => {
     setPage(page);
   };
 
@@ -73,7 +83,7 @@ export default function FilesList({ files }: { files: FileObject[] }) {
           onNext={onNext}
           onPrev={onPrev}
           onClick={onClick}
-          limit={columns * rows}
+          limit={limit}
           count={count}
         />
       </div>

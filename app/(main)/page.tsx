@@ -10,10 +10,15 @@ import { getSearchedFiles } from '@/app/store/storageSlice';
 import Image from 'next/image';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import FilesList from '@/app/components/marketplace/FilesList';
+import InputSelect from '@/app/components/inputs/InputSelect';
 // TYPES
-import { FileObject, StorageState } from '@/app/types';
+import { FileObject, Option, StorageState } from '@/app/types';
 // CONSTANTS
-import { SEARCH_DEBOUNCE } from '@/constants/constants';
+import {
+  FILTER_1_OPTIONS,
+  FILTER_2_OPTIONS,
+  SEARCH_DEBOUNCE,
+} from '@/constants/constants';
 // UTILS
 import debounce from 'lodash.debounce';
 
@@ -53,6 +58,8 @@ const Marketplace = () => {
 
   const [filters, setFilters] = useState({
     search: '',
+    filter1: '1',
+    filter2: '1',
   });
   const handleInputChange =
     (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +68,10 @@ const Marketplace = () => {
         [name]: event.target.value,
       }));
     };
+
+  const handleFilterChange = (name: string) => (value: Option) => {
+    setFilters({ ...filters, [name]: value.id });
+  };
 
   const [filteredValues, setFilteredValues] = useState([]);
 
@@ -126,12 +137,29 @@ const Marketplace = () => {
               onChange={handleInputChange('search')}
             />
           </form>
-          <div className={'flex items-center justify-end gap-4'}></div>
+          <div
+            className={'relative flex w-full items-center justify-end gap-4'}
+          >
+            <InputSelect
+              options={FILTER_1_OPTIONS}
+              selected={filters.filter1}
+              onChange={handleFilterChange('filter1')}
+              autoWidth={true}
+            />
+            <InputSelect
+              options={FILTER_2_OPTIONS}
+              selected={filters.filter2}
+              onChange={handleFilterChange('filter2')}
+              autoWidth={true}
+            />
+          </div>
         </div>
       </div>
-      <div className={'max-w-1440 relative -mt-60 w-full px-14 pb-7'}>
-        <FilesList files={filteredValues} />
-      </div>
+      {!!data?.files && (
+        <div className={'max-w-1440 relative -mt-60 w-full px-14 pb-7'}>
+          <FilesList files={filteredValues} />
+        </div>
+      )}
     </div>
   );
 };

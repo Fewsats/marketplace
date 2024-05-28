@@ -5,7 +5,7 @@ import {
   ArrowLongRightIcon,
 } from '@heroicons/react/20/solid';
 
-const range = (start, end) => {
+const range = (start: number, end: number) => {
   let length = end - start + 1;
   return Array.from({ length }, (_, idx) => idx + start);
 };
@@ -30,7 +30,10 @@ export default function Pagination({
   count: number;
 }) {
   const { width } = useWindowSize();
-  const siblingCount = useMemo(() => (width > 640 ? 10 : 3), [width]);
+  const siblingCount = useMemo(
+    () => (width ? (width > 640 ? 10 : 3) : 0),
+    [width]
+  );
 
   const paginationRange = useMemo(() => {
     const firstPageIndex = 1;
@@ -88,7 +91,7 @@ export default function Pagination({
             ) : (
               <li key={i}>
                 <button
-                  onClick={onClick(item)}
+                  onClick={onClick(+item)}
                   className={`inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-semibold ${currentPage === item ? 'text-violet-600' : 'text-zinc-950 hover:text-violet-500'} transition-all`}
                 >
                   {item}
