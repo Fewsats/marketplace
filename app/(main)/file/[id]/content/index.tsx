@@ -70,10 +70,16 @@ const FileComponent = ({ file }: { file: FileObject }) => {
               ) : (
                 <div
                   className={
-                    'flex items-center justify-center rounded-lg border border-gray-200 bg-black text-sm text-white'
+                    'flex aspect-square items-center justify-center rounded-lg border border-gray-200 bg-black p-2.5 text-sm text-white'
                   }
                 >
-                  {file.name.replace(file.extension, '')}
+                  <span
+                    className={
+                      'line-clamp-2 whitespace-normal break-all text-center'
+                    }
+                  >
+                    {file.name.replace(file.extension, '')}
+                  </span>
                 </div>
               )}
             </div>

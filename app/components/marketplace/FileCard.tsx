@@ -28,10 +28,14 @@ export default function FileCard({ file }: { file: FileObject }) {
         ) : (
           <div
             className={
-              'absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black text-sm text-white'
+              'absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black p-2.5 text-sm text-white'
             }
           >
-            {file.name.replace(file.extension, '')}
+            <span
+              className={'line-clamp-2 whitespace-normal break-all text-center'}
+            >
+              {file.name.replace(file.extension, '')}
+            </span>
           </div>
         )}
       </div>

@@ -15,7 +15,11 @@ async function fetchFile(id: string) {
   return res.json();
 }
 
-export default async function BillingPage({ params }: { params: { id: string } }) {
+export default async function BillingPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   revalidateTag('file');
   const id = params.id;
   const data = id && (await fetchFile(id));
