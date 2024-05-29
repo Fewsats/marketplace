@@ -1,18 +1,13 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-// ACTIONS
-import { useAppDispatch, useAppThunkDispatch } from '@/app/store/store';
-import { hideLoader, showLoader } from '@/app/store/applicationSlice';
-import { getSearchedFiles } from '@/app/store/storageSlice';
 // COMPONENTS
 import Image from 'next/image';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import FilesList from '@/app/components/marketplace/FilesList';
 import InputSelect from '@/app/components/inputs/InputSelect';
 // TYPES
-import { FileObject, Option, StorageState } from '@/app/types';
+import { FileObject, Option } from '@/app/types';
 // CONSTANTS
 import {
   FILTER_1_OPTIONS,
@@ -22,39 +17,8 @@ import {
 // UTILS
 import debounce from 'lodash.debounce';
 
-const MarketplacePage = () => {
-  const dispatchThunk = useAppThunkDispatch();
-  const dispatch = useAppDispatch();
-  const data = useSelector(
-    (state: { storage: StorageState }) => state.storage.data
-  );
-  const status = useSelector(
-    (state: { storage: StorageState }) => state.storage.status
-  );
-  const isFetching = useRef(false);
-
-  const values = useMemo(() => data?.files || [], [data]);
-
-  useEffect(() => {
-    if (isFetching.current) {
-      return;
-    }
-
-    isFetching.current = true;
-    handleGetStorage();
-  }, []);
-
-  const handleGetStorage = async () => {
-    await dispatchThunk(getSearchedFiles({}));
-  };
-
-  useEffect(() => {
-    if (status === 'loading') {
-      dispatch(showLoader());
-    } else {
-      dispatch(hideLoader());
-    }
-  }, [status]);
+const CatalogComponent = ({ files }: { files: FileObject[] }) => {
+  const values = useMemo(() => files || [], [files]);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -73,7 +37,7 @@ const MarketplacePage = () => {
     setFilters({ ...filters, [name]: value.id });
   };
 
-  const [filteredValues, setFilteredValues] = useState([]);
+  const [filteredValues, setFilteredValues] = useState(values);
 
   const setFiltersDebounced = useRef(
     debounce(({ filters, values }) => {
@@ -122,7 +86,7 @@ const MarketplacePage = () => {
           </h1>
           <form
             className='relative mb-20 flex w-full max-w-4xl items-center rounded-lg bg-white px-8 py-4'
-            action='#'
+            action='@/app/(main)/(home)/page#'
           >
             <label htmlFor='search-field' className='sr-only'>
               Search by file name or tags
@@ -159,17 +123,15 @@ const MarketplacePage = () => {
           </div>
         </div>
       </div>
-      {!!data?.files && (
-        <div
-          className={
-            'relative mx-auto -mt-60 w-full max-w-screen-1xl px-4 pb-7 md:px-14'
-          }
-        >
-          <FilesList files={filteredValues} />
-        </div>
-      )}
+      <div
+        className={
+          'relative mx-auto -mt-60 w-full max-w-screen-1xl px-4 pb-7 md:px-14'
+        }
+      >
+        <FilesList files={filteredValues} />
+      </div>
     </div>
   );
 };
 
-export default MarketplacePage;
+export default CatalogComponent;

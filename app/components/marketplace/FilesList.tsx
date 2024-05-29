@@ -16,14 +16,16 @@ export default function FilesList({ files }: { files: FileObject[] }) {
   const { width } = useWindowSize();
   const columns = useMemo(
     () =>
-      width &&
-      ((width > DESKTOP_WIDTH && 3) || (width > TABLET_WIDTH && 2) || 1),
+      width
+        ? (width > DESKTOP_WIDTH && 3) || (width > TABLET_WIDTH && 2) || 1
+        : 3,
     [width]
   );
   const rows = useMemo(
     () =>
-      width &&
-      ((width > DESKTOP_WIDTH && 3) || (width > TABLET_WIDTH && 4) || 3),
+      width
+        ? (width > DESKTOP_WIDTH && 3) || (width > TABLET_WIDTH && 4) || 3
+        : 3,
     [width]
   );
   const values = useMemo(() => {
@@ -32,7 +34,7 @@ export default function FilesList({ files }: { files: FileObject[] }) {
       const offset = limit * (page - 1);
       return files.slice(offset, offset + limit);
     } else {
-      return [];
+      return files;
     }
   }, [files, columns, rows, page]);
 
@@ -73,7 +75,7 @@ export default function FilesList({ files }: { files: FileObject[] }) {
       <div
         className={`grid grid-cols-1 items-stretch gap-x-6 gap-y-11 md:grid-cols-2 xl:grid-cols-3`}
       >
-        {values.map((file, i) => (
+        {values.map((file: FileObject, i) => (
           <div key={file.external_id}>
             <FileCard file={file} />
           </div>

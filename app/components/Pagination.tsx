@@ -33,7 +33,7 @@ export default function Pagination({
 }) {
   const { width } = useWindowSize();
   const siblingCount = useMemo(
-    () => (width ? (width > 640 ? 10 : 3) : 0),
+    () => (width ? (width > 1024 ? 10 : 3) : 0),
     [width]
   );
 
@@ -62,10 +62,12 @@ export default function Pagination({
   }, [totalPages, limit, siblingCount, currentPage]);
 
   return (
-    <div className={'flex w-fit items-center justify-center'}>
+    <div
+      className={`-mb-4 flex w-fit items-center justify-center ${width ? 'opacity-1' : 'opacity-0'} transition`}
+    >
       <button
         onClick={onPrev}
-        className={`-mt-px mr-10 flex flex-1 ${currentPage === 1 ? 'pointer-events-none opacity-50' : 'opacity-1'} transition-all`}
+        className={`-mt-px mr-10 flex flex-1 py-4 ${currentPage === 1 ? 'pointer-events-none opacity-50' : 'opacity-1'} transition-all`}
       >
         <span
           className={`inline-flex items-center border-t-2 border-transparent pr-1 text-sm font-semibold text-zinc-950 hover:text-violet-600`}
@@ -78,14 +80,20 @@ export default function Pagination({
         </span>
       </button>
       <ul className={'-mt-px flex'}>
-        {count <= limit && <div className={''}>1</div>}
+        {count <= limit && (
+          <div
+            className={`inline-flex items-center border-t-2 border-transparent p-4 text-sm font-semibold text-violet-600 transition-all`}
+          >
+            1
+          </div>
+        )}
         {count >= limit + 1 &&
           paginationRange.map((item, i) =>
             item === DOTS ? (
               <li
                 key={i}
                 className={
-                  'inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-semibold text-zinc-950'
+                  'inline-flex items-center border-t-2 border-transparent p-4 text-sm font-semibold text-zinc-950'
                 }
               >
                 &#8230;
@@ -94,7 +102,7 @@ export default function Pagination({
               <li key={i}>
                 <button
                   onClick={onClick(+item)}
-                  className={`inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-semibold ${currentPage === item ? 'text-violet-600' : 'text-zinc-950 hover:text-violet-500'} transition-all`}
+                  className={`inline-flex items-center border-t-2 border-transparent p-4 text-sm font-semibold ${currentPage === item ? 'text-violet-600' : 'text-zinc-950 hover:text-violet-500'} transition-all`}
                 >
                   {item}
                 </button>
@@ -104,7 +112,7 @@ export default function Pagination({
       </ul>
       <button
         onClick={onNext}
-        className={`-mt-px ml-10 flex flex-1 justify-end ${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'opacity-1'} transition-all`}
+        className={`-mt-px ml-10 flex flex-1 justify-end py-4 ${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'opacity-1'} transition-all`}
       >
         <span
           className={`inline-flex items-center border-t-2 border-transparent pl-1 text-sm font-semibold text-zinc-950 hover:text-violet-600`}

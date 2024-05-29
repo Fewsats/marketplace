@@ -1,3 +1,4 @@
+import React from 'react';
 // COMPONENTS
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +10,7 @@ import formatPrice from '@/app/utils/formatPrice';
 export default function FileCard({ file }: { file: FileObject }) {
   return (
     <Link
-      href={`/catalog/${file.external_id}`}
+      href={`/file/${file.external_id}`}
       className={
         'flex h-full w-full flex-col rounded-lg border border-gray-200'
       }
@@ -17,17 +18,27 @@ export default function FileCard({ file }: { file: FileObject }) {
       <div
         className={'relative aspect-video w-full overflow-hidden rounded-t-xl'}
       >
-        <Image
-          src={'/images/FewsatsLogo.svg'}
-          alt={'File'}
-          className={`bg-gray-100 transition-opacity`}
-          fill={true}
-        />
+        {file.cover_url ? (
+          <Image
+            src={file.cover_url}
+            alt={file.name.replace(file.extension, '')}
+            className={`bg-gray-100 object-cover transition-opacity`}
+            fill={true}
+          />
+        ) : (
+          <div
+            className={
+              'absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black text-sm text-white'
+            }
+          >
+            {file.name.replace(file.extension, '')}
+          </div>
+        )}
       </div>
       <div className={'flex w-full flex-1 flex-col justify-between p-5'}>
         <div>
           <div className={'mb-2 text-base font-medium text-zinc-950'}>
-            {file.name}
+            {file.name.replace(file.extension, '')}
           </div>
           <div className={'mb-4 max-w-72 text-sm text-gray-400'}>
             {file.description}
