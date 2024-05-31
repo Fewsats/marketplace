@@ -9,11 +9,7 @@ import InputSelect from '@/app/components/inputs/InputSelect';
 // TYPES
 import { FileObject, Option } from '@/app/types';
 // CONSTANTS
-import {
-  FILTER_1_OPTIONS,
-  FILTER_2_OPTIONS,
-  SEARCH_DEBOUNCE,
-} from '@/constants/constants';
+import { FILTER_SORT_OPTIONS, SEARCH_DEBOUNCE } from '@/constants/constants';
 // UTILS
 import debounce from 'lodash.debounce';
 
@@ -22,8 +18,7 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
 
   const [filters, setFilters] = useState({
     search: '',
-    filter1: '1',
-    filter2: '1',
+    sort: 'date',
   });
   const handleInputChange =
     (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +41,20 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
           ? item.name.toLowerCase().includes(filters.search.toLowerCase())
           : true;
       });
-      setFilteredValues(filtered);
+      const sorted =
+        (filters.sort === 'date' &&
+          filtered.sort(
+            (a: FileObject, b: FileObject) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )) ||
+        (filters.sort === 'price' &&
+          filtered.sort(
+            (a: FileObject, b: FileObject) =>
+              b.price_in_usd_cents - a.price_in_usd_cents
+          )) ||
+        filtered;
+      setFilteredValues(sorted);
     }, SEARCH_DEBOUNCE)
   );
 
@@ -109,15 +117,9 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
             className={'relative flex w-full items-center justify-end gap-4'}
           >
             <InputSelect
-              options={FILTER_1_OPTIONS}
-              selected={filters.filter1}
-              onChange={handleFilterChange('filter1')}
-              autoWidth={true}
-            />
-            <InputSelect
-              options={FILTER_2_OPTIONS}
-              selected={filters.filter2}
-              onChange={handleFilterChange('filter2')}
+              options={FILTER_SORT_OPTIONS}
+              selected={filters.sort}
+              onChange={handleFilterChange('sort')}
               autoWidth={true}
             />
           </div>
