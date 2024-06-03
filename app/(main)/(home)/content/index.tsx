@@ -92,9 +92,8 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
           >
             Files catalog
           </h1>
-          <form
+          <div
             className='relative mb-20 flex w-full max-w-4xl items-center rounded-lg bg-white px-8 py-4'
-            action='@/app/(main)/(home)/page#'
           >
             <label htmlFor='search-field' className='sr-only'>
               Search by file name or tags
@@ -112,7 +111,7 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
               value={filters.search}
               onChange={handleInputChange('search')}
             />
-          </form>
+          </div>
           <div
             className={'relative flex w-full items-center justify-end gap-4'}
           >
