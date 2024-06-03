@@ -49,17 +49,17 @@ export default function FileCard({ file }: { file: FileObject }) {
           </div>
           <div className={'mb-4 flex flex-wrap items-start gap-2'}>
             {file.tags
-                ?.filter((tag) => !!tag)
-                .map((tag, i) => (
-              <div
-                key={i}
-                className={
-                  'rounded-md bg-purple-100 px-1.5 py-1 text-xs font-medium leading-4 text-purple-700'
-                }
-              >
-                {tag}
-              </div>
-            ))}
+              ?.filter((tag) => !!tag)
+              .map((tag, i) => (
+                <div
+                  key={i}
+                  className={
+                    'rounded-md bg-purple-100 px-1.5 py-1 text-xs font-medium leading-4 text-purple-700'
+                  }
+                >
+                  {tag}
+                </div>
+              ))}
           </div>
         </div>
         <div

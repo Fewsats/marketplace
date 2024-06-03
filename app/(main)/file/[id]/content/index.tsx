@@ -94,17 +94,17 @@ const FileComponent = ({ file }: { file: FileObject }) => {
               </div>
               <div className={'flex flex-wrap items-start gap-2'}>
                 {file.tags
-                    ?.filter((tag) => !!tag)
-                    .map((tag, i) => (
-                  <div
-                    key={i}
-                    className={
-                      'rounded-md bg-purple-100 px-1.5 py-1  text-xs font-medium leading-4 text-purple-700 sm:px-2 sm:py-2 sm:text-base'
-                    }
-                  >
-                    {tag}
-                  </div>
-                ))}
+                  ?.filter((tag) => !!tag)
+                  .map((tag, i) => (
+                    <div
+                      key={i}
+                      className={
+                        'rounded-md bg-purple-100 px-1.5 py-1  text-xs font-medium leading-4 text-purple-700 sm:px-2 sm:py-2 sm:text-base'
+                      }
+                    >
+                      {tag}
+                    </div>
+                  ))}
               </div>
               <div className={'flex gap-2'}>
                 <div
