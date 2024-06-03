@@ -51,7 +51,7 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
         (filters.sort === 'price' &&
           filtered.sort(
             (a: FileObject, b: FileObject) =>
-              b.price_in_usd_cents - a.price_in_usd_cents
+              b.price_in_cents - a.price_in_cents
           )) ||
         filtered;
       setFilteredValues(sorted);
