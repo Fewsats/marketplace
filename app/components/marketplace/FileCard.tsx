@@ -48,7 +48,7 @@ export default function FileCard({ file }: { file: FileObject }) {
             {file.description}
           </div>
           <div className={'mb-4 flex flex-wrap items-start gap-2'}>
-            {['Tag Title', 'Tag Title', 'Tag Title'].map((tag, i) => (
+            {file.tags?.map((tag, i) => (
               <div
                 key={i}
                 className={
