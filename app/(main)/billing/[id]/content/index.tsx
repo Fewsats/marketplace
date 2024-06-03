@@ -402,7 +402,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               <div className={'text-base leading-4 text-zinc-400'}>
                 Price:
                 <span className={'ml-2 font-medium text-zinc-950'}>
-                  {formatPrice(file.price_in_usd_cents)}
+                  {formatPrice(file.price_in_cents)}
                 </span>
               </div>
             </div>

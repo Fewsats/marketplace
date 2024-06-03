@@ -50,7 +50,7 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                 'ml-2 text-lg font-semibold leading-6 text-zinc-950 sm:text-xl'
               }
             >
-              {formatPrice(file.price_in_usd_cents)}
+              {formatPrice(file.price_in_cents)}
             </span>
           </div>
           <div
@@ -93,16 +93,18 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                 {file.description}
               </div>
               <div className={'flex flex-wrap items-start gap-2'}>
-                {file.tags?.map((tag, i) => (
-                  <div
-                    key={i}
-                    className={
-                      'rounded-md bg-purple-100 px-1.5 py-1  text-xs font-medium leading-4 text-purple-700 sm:px-2 sm:py-2 sm:text-base'
-                    }
-                  >
-                    {tag}
-                  </div>
-                ))}
+                {file.tags
+                  ?.filter((tag) => !!tag)
+                  .map((tag, i) => (
+                    <div
+                      key={i}
+                      className={
+                        'rounded-md bg-purple-100 px-1.5 py-1  text-xs font-medium leading-4 text-purple-700 sm:px-2 sm:py-2 sm:text-base'
+                      }
+                    >
+                      {tag}
+                    </div>
+                  ))}
               </div>
               <div className={'flex gap-2'}>
                 <div

@@ -48,16 +48,18 @@ export default function FileCard({ file }: { file: FileObject }) {
             {file.description}
           </div>
           <div className={'mb-4 flex flex-wrap items-start gap-2'}>
-            {file.tags?.map((tag, i) => (
-              <div
-                key={i}
-                className={
-                  'rounded-md bg-purple-100 px-1.5 py-1 text-xs font-medium leading-4 text-purple-700'
-                }
-              >
-                {tag}
-              </div>
-            ))}
+            {file.tags
+              ?.filter((tag) => !!tag)
+              .map((tag, i) => (
+                <div
+                  key={i}
+                  className={
+                    'rounded-md bg-purple-100 px-1.5 py-1 text-xs font-medium leading-4 text-purple-700'
+                  }
+                >
+                  {tag}
+                </div>
+              ))}
           </div>
         </div>
         <div
@@ -67,7 +69,7 @@ export default function FileCard({ file }: { file: FileObject }) {
           <span
             className={'ml-2 text-base font-semibold leading-6 text-zinc-950'}
           >
-            {formatPrice(file.price_in_usd_cents)}
+            {formatPrice(file.price_in_cents)}
           </span>
         </div>
       </div>
