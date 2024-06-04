@@ -6,7 +6,7 @@ import '../globals.css';
 const inter = Inter({ subsets: ['latin'] });
 // COMPONENTS
 import Loader from '@/app/components/Loader';
-import Head from "next/head";
+import Head from 'next/head';
 
 export default function MainLayout({
   children,

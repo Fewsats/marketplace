@@ -3,6 +3,12 @@
 import { revalidateTag } from 'next/cache';
 import CatalogComponent from '@/app/(main)/(home)/content';
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  return {
+    title: 'Catalog',
+  };
+}
+
 async function fetchFiles() {
   const res = await fetch(`${process.env.API_URL}/v0/storage/search`, {
     next: { tags: ['files'] },
