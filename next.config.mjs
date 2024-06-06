@@ -20,6 +20,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'fewsats-production-public-files.s3.us-west-1.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
