@@ -12,12 +12,16 @@ import InputText from '@/app/components/inputs/InputText';
 import InputNumber from '@/app/components/inputs/InputNumber';
 import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
+import { launchPaymentModal } from '@getalby/bitcoin-connect-react';
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
 import formatPrice from '@/app/utils/formatPrice';
+import apiClient from '@/app/services/apiClient';
+import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
+  const [submitting, setSubmitting] = useState(false);
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const router = useRouter();
@@ -89,29 +93,105 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
     validateOnChange: false,
     validateOnBlur: false,
     enableReinitialize: true,
-    validationSchema,
-    onSubmit: (values, { resetForm, setErrors }) => {
-      const formData = new FormData();
-      formData.append(
-        'values',
-        JSON.stringify({
-          id: 'external_id',
-          data: {
-            email: values.email.trim(),
-            phone: values.phone.trim(),
-            firstName: values.firstName.trim(),
-            lastName: values.lastName.trim(),
-            address: values.address.trim(),
-            country: values.country.trim(),
-            postalCode: values.postalCode.trim(),
-            city: values.city.trim(),
-            state: values.state.trim(),
-            company: values.company.trim(),
-          },
-        })
-      );
+    //validationSchema,
+    onSubmit: async (values, { resetForm, setErrors }) => {
+      const data = {
+        'contact.email': values.email.trim(),
+        'contact.phone': values.phone.trim(),
+        'contact.first_name': values.firstName.trim(),
+        'contact.last_name': values.lastName.trim(),
+        'contact.address': values.address.trim(),
+        'contact.country': values.country.trim(),
+        'contact.zip': values.postalCode.trim(),
+        'contact.city': values.city.trim(),
+        'contact.state': values.state.trim(),
+        'contact.company': values.company.trim(),
+        'contact.nickname': '.',
+      };
 
-      setSuccessAlert(true);
+      setSubmitting(true);
+
+      // const id = toast.loading('Processing payment...')
+
+      const payload = {
+        name: file.name,
+        ...data,
+      };
+
+      try {
+        let l402Header = null;
+
+        // First try to buy the domain which will return a 402 and the WWW-Authenticate header
+        await apiClient
+          .get(`${process.env.API_URL}/v0/storage/download/${file.external_id}`)
+          .catch((err) => {
+            console.log(
+              `err?.response?.status === 402 && `,
+              err?.response?.status === 402
+            );
+            console.log(
+              ` err.response.headers.get('WWW-Authenticate')`,
+              err.response.headers.get('WWW-Authenticate')
+            );
+            console.log(
+              ` err.response.headers['WWW-Authenticate']`,
+              err.response.headers['WWW-Authenticate']
+            );
+
+            console.log('fullerror', err);
+            if (err.response.headers) {
+              console.log('err.response.headers', err.response.headers);
+              Object.keys(err.response.headers).forEach((key) => {
+                console.log(key, err.response.headers[key]);
+              });
+            }
+
+            if (
+              err?.response?.status === 402 &&
+              err?.response?.headers &&
+              err?.response?.headers.get('WWW-Authenticate')
+            ) {
+              console.log('err.response.headers', err.response);
+              l402Header = err.response.headers.get('WWW-Authenticate');
+            }
+            return null;
+          });
+        console.log('l402Header', l402Header);
+        if (!l402Header) {
+          // toast.error('Payment unsuccessful, no 402 header found')
+          return;
+        }
+
+        const { macaroon, invoice }: { macaroon?: string, invoice?: string } = parseWWWAuthenticateHeader(l402Header);
+
+        if (macaroon && invoice) {
+          launchPaymentModal({
+            invoice,
+            paymentMethods: 'internal',
+            onPaid: async ({ preimage }) => {
+              // Now that the payment is successful, we can buy the domain
+              await apiClient.get(
+                  `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
+                  {
+                    headers: { Authorization: `L402 ${macaroon}:${preimage}` },
+                  }
+              );
+              // toast.success('Payment successful')
+              console.log('setting success to true');
+              setSuccessAlert(true);
+            },
+            onCancelled: () => {
+              // toast.error('Payment cancelled')
+            },
+          });
+        }
+      } catch (error) {
+        // toast.error(error?.response?.data?.error || 'Payment unsuccessful')
+        console.error(error);
+      } finally {
+        setSubmitting(false);
+        // toast.dismiss(id)
+      }
     },
   });
 
@@ -412,7 +492,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
             <PrimaryButton
               type={'submit'}
               buttonText={'Pay'}
-              disabled={!isValid}
+              disabled={!isValid || submitting}
             />
           </div>
         </form>
