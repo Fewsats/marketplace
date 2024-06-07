@@ -28,7 +28,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // check if code is running on client side
       init({ appName: 'Fewsats' });
     }
   }, []);
