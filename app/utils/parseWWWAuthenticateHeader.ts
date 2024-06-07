@@ -1,19 +1,26 @@
 export default function parseWWWAuthenticateHeader(inputString: string) {
-  // Splitting the string by spaces
-  const parts = inputString.split(' ');
+  // Regular expressions to extract macaroon and invoice
+  const macaroonRegex = /macaroon="([^"]+)"/;
+  const invoiceRegex = /invoice="([^"]+)"/;
 
-  // Creating an object to hold only the macaroon and invoice values
-  const result: { macaroon?: string; invoice?: string } = {};
+  // Check if the input string is empty
+  if (!inputString) {
+    throw new Error("No WWW-Authenticate header found");
+  }
 
-  // Iterating over each part of the string
-  parts.forEach((part) => {
-    if (part.includes('macaroon=')) {
-      result.macaroon = part.split('=')[1].replace(/"/g, '');
-    } else if (part.includes('invoice=')) {
-      result.invoice = part.split('=')[1].replace(/"/g, '');
-    }
-  });
+  // Extracting macaroon and invoice using regex
+  const macaroonMatches = macaroonRegex.exec(inputString);
+  const invoiceMatches = invoiceRegex.exec(inputString);
+
+  // Check if both macaroon and invoice are found
+  if (!macaroonMatches || !invoiceMatches) {
+    throw new Error("Missing macaroon or invoice in the header");
+  }
+
+  // Extracting the values from the regex matches
+  const macaroon = macaroonMatches[1];
+  const invoice = invoiceMatches[1];
 
   // Return the resulting object
-  return result;
+  return { macaroon, invoice };
 }
