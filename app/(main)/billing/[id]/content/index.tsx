@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 // COMPONENTS
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import InputText from '@/app/components/inputs/InputText';
 import InputNumber from '@/app/components/inputs/InputNumber';
 import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
-import { launchPaymentModal } from '@getalby/bitcoin-connect-react';
+import { init, launchPaymentModal } from '@getalby/bitcoin-connect-react';
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
@@ -25,6 +25,13 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // check if code is running on client side
+      init({ appName: 'Fewsats' });
+    }
+  }, []);
 
   const validationSchema = useMemo(
     () =>
@@ -162,7 +169,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           return;
         }
 
-        const { macaroon, invoice }: { macaroon?: string, invoice?: string } = parseWWWAuthenticateHeader(l402Header);
+        const { macaroon, invoice }: { macaroon?: string; invoice?: string } =
+          parseWWWAuthenticateHeader(l402Header);
 
         if (macaroon && invoice) {
           launchPaymentModal({
@@ -171,10 +179,10 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
             onPaid: async ({ preimage }) => {
               // Now that the payment is successful, we can buy the domain
               await apiClient.get(
-                  `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
-                  {
-                    headers: { Authorization: `L402 ${macaroon}:${preimage}` },
-                  }
+                `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
+                {
+                  headers: { Authorization: `L402 ${macaroon}:${preimage}` },
+                }
               );
               // toast.success('Payment successful')
               console.log('setting success to true');
