@@ -166,7 +166,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
         const { macaroon, invoice }: { macaroon?: string; invoice?: string } =
           parseWWWAuthenticateHeader(l402Header);
-
+        console.log('macaroon:', macaroon);
+        console.log('invoice:', invoice);
         if (macaroon && invoice) {
           launchPaymentModal({
             invoice,
