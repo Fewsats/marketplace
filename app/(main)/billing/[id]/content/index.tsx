@@ -19,6 +19,7 @@ import { FileObject } from '@/app/types';
 import formatPrice from '@/app/utils/formatPrice';
 import apiClient from '@/app/services/apiClient';
 import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
+import apiClientBlob from "@/app/services/apiClientBlob";
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
@@ -174,15 +175,24 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
             paymentMethods: 'internal',
             onPaid: async ({ preimage }) => {
               // Now that the payment is successful, we can buy the domain
-              await apiClient.get(
+              apiClientBlob.get(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
                 {
                   headers: { Authorization: `L402 ${macaroon}:${preimage}` },
-                }
-              );
-              // toast.success('Payment successful')
-              console.log('setting success to true');
-              setSuccessAlert(true);
+                },
+              )
+                  .then((response) => {
+                    const blob = new Blob([response.data], { type: response.data.type });
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'file.pdf'; // Specify the desired filename
+                    link.click();
+
+                    // toast.success('Payment successful')
+                    console.log('setting success to true');
+                    setSuccessAlert(true);
+                  })
             },
             onCancelled: () => {
               // toast.error('Payment cancelled')
