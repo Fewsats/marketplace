@@ -185,6 +185,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
             },
             onCancelled: () => {
               // toast.error('Payment cancelled')
+              setErrorAlert(true);
             },
           });
         }

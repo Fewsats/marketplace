@@ -8,9 +8,9 @@ export default function parseWWWAuthenticateHeader(inputString: string) {
   // Iterating over each part of the string
   parts.forEach((part) => {
     if (part.includes('macaroon=')) {
-      result.macaroon = part.split('=')[1];
+      result.macaroon = part.split('=')[1].replace(/"/g, '');
     } else if (part.includes('invoice=')) {
-      result.invoice = part.split('=')[1];
+      result.invoice = part.split('=')[1].replace(/"/g, '');
     }
   });
 
