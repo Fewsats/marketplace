@@ -132,12 +132,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           .get(`${process.env.API_URL}/v0/storage/download/${file.external_id}`)
           .catch((err) => {
             console.log(
-              `err?.response?.status === 402 && `,
-              err?.response?.status === 402
-            );
-            console.log(
-              ` err.response.headers.get('WWW-Authenticate')`,
-              err.response.headers.get('WWW-Authenticate')
+              `err?.response?.status`,
+              err?.response?.status
             );
             console.log(
               ` err.response.headers['WWW-Authenticate']`,
