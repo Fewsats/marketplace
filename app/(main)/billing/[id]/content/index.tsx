@@ -13,6 +13,7 @@ import InputNumber from '@/app/components/inputs/InputNumber';
 import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
 import { init, launchPaymentModal } from '@getalby/bitcoin-connect-react';
+import { Invoice } from "alby-tools";
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
@@ -25,6 +26,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
+  const [paymentHash, setPaymentHash] = useState('N/A');
   const router = useRouter();
 
   useEffect(() => {
@@ -118,8 +120,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
       setSubmitting(true);
 
-      // const id = toast.loading('Processing payment...')
-
       const payload = {
         name: file.name,
         ...data,
@@ -169,6 +169,12 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           parseWWWAuthenticateHeader(l402Header);
         console.log('macaroon:', macaroon);
         console.log('invoice:', invoice);
+
+        if (invoice) {
+          const invoiceObj = new Invoice({ pr: invoice });
+          const { paymentHash } = invoiceObj;
+          setPaymentHash(paymentHash);
+        }
         if (macaroon && invoice) {
           launchPaymentModal({
             invoice,
@@ -202,6 +208,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         }
       } catch (error) {
         // toast.error(error?.response?.data?.error || 'Payment unsuccessful')
+        setErrorAlert(true);
         console.error(error);
       } finally {
         setSubmitting(false);
@@ -527,13 +534,22 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         onClose={handleCloseError}
         title={'Payment failed'}
         text={
-          'The payment failed, please try again. If the problem persists, please contact us.'
+          <div className="max-w-full break-words p-4 mx-auto">
+            We could not process your payment.
+            <br />
+            Please message us with the payment hash:
+            <br />
+            <br />
+            {paymentHash}
+          </div>
         }
         button={'Go back to File'}
         theme={'error'}
+        className="max-w-2xl break-words p-4 mx-auto"
       />
     </div>
   );
 };
 
 export default BillingComponent;
+
