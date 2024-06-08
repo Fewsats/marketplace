@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Inter } from 'next/font/google';
+import Intercom from '@intercom/messenger-js-sdk';
 import '../globals.css';
 const inter = Inter({ subsets: ['latin'] });
 // COMPONENTS
@@ -13,6 +14,14 @@ export default function MainLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    Intercom({
+      app_id: process.env.NEXT_PUBLIC_INTERCOM || '',
+      vertical_padding: 60,
+      horizontal_padding: 0,
+    });
+  }, []);
+
   return (
     <>
       <Head>
