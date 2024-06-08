@@ -111,6 +111,7 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                   className={
                     'flex-1 rounded-lg border border-gray-300 p-3 text-sm leading-4 text-zinc-400 sm:p-4 sm:text-base'
                   }
+                  style={{ display: 'none' }}
                 >
                   Size:
                   <span className={'ml-2 font-medium text-zinc-950'}>
@@ -122,9 +123,9 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                     'flex-1 rounded-lg border border-gray-300 p-3 text-sm leading-4 text-zinc-400 sm:p-4 sm:text-base'
                   }
                 >
-                  Format:
+                  File Name:
                   <span className={'ml-2 font-medium text-zinc-950'}>
-                    {file.extension && file.extension.replace('.', '')}
+                    {file.file_name}
                   </span>
                 </div>
               </div>

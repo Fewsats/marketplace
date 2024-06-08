@@ -1,6 +1,7 @@
 export interface FileObject {
   external_id: string;
   name: string;
+  file_name: string;
   description: string;
   price_in_cents: number;
   created_at: number;

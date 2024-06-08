@@ -186,7 +186,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                     const url = window.URL.createObjectURL(new Blob([blob]));
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = 'file.pdf'; // Specify the desired filename
+                    link.download = file.file_name; 
                     link.click();
 
                     // toast.success('Payment successful')
@@ -517,7 +517,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         onClose={handleCloseSuccess}
         title={'Payment successful'}
         text={
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam efficitur odio diam. Nam facilisis sit amet velit'
+          'The payment was successful, your download will start shortly.'
         }
         button={'Go back to Catalog'}
         theme={'success'}
@@ -527,7 +527,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         onClose={handleCloseError}
         title={'Payment failed'}
         text={
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam efficitur odio diam. Nam facilisis sit amet velit'
+          'The payment failed, please try again. If the problem persists, please contact us.'
         }
         button={'Go back to File'}
         theme={'error'}
