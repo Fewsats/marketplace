@@ -13,7 +13,7 @@ import InputNumber from '@/app/components/inputs/InputNumber';
 import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
 import { init, launchPaymentModal } from '@getalby/bitcoin-connect-react';
-import { Invoice } from "alby-tools";
+import { Invoice } from "@getalby/lightning-tools";
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
@@ -105,6 +105,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
     //validationSchema,
     onSubmit: async (values, { resetForm, setErrors }) => {
       const data = {
+        'external_id': file.external_id,
         'contact.email': values.email.trim(),
         'contact.phone': values.phone.trim(),
         'contact.first_name': values.firstName.trim(),
@@ -118,13 +119,23 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         'contact.nickname': '.',
       };
 
-      setSubmitting(true);
-
       const payload = {
         name: file.name,
         ...data,
       };
+      
+      await apiClient.post(`${process.env.API_URL}/v0/orders/marketplace`, payload)
+      .then(response => {
+        console.log('Payment info sent', response.data);
+      })
+      .catch(error => {
+        console.error('Failed to send payment info', error);
+        // TODO(pol) add error handling
+        return;
+      });
 
+      setSubmitting(true);
+      
       try {
         let l402Header = null;
 
@@ -141,7 +152,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               err.response.headers['WWW-Authenticate']
             );
 
-            console.log('fullerror', err);
             if (err.response.headers) {
               console.log('err.response.headers', err.response.headers);
               Object.keys(err.response.headers).forEach((key) => {
@@ -170,17 +180,37 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         console.log('macaroon:', macaroon);
         console.log('invoice:', invoice);
 
+        let localPaymentHash = ''
         if (invoice) {
           const invoiceObj = new Invoice({ pr: invoice });
-          const { paymentHash } = invoiceObj;
-          setPaymentHash(paymentHash);
+          localPaymentHash = invoiceObj?.paymentHash
+          setPaymentHash(localPaymentHash);
         }
+        
         if (macaroon && invoice) {
           launchPaymentModal({
             invoice,
             paymentMethods: 'internal',
             onPaid: async ({ preimage }) => {
-              // Now that the payment is successful, we can buy the domain
+              
+              const purchaseDetails = {
+                external_id: file.external_id,
+                payment_hash: localPaymentHash,
+                email: formik.values.email.trim(),
+              };
+
+              console.log('purchaseDetails', purchaseDetails);
+
+              await apiClient.post(`${process.env.API_URL}/v0/orders/purchases/marketplace`, purchaseDetails)
+                .then(response => {
+                  console.log('Purchase recorded', response.data);
+                })
+                .catch(error => {
+                  console.error('Failed to record purchase', error);
+                  // TODO(pol) add error handling
+                });
+
+
               apiClientBlob.get(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
                 {
