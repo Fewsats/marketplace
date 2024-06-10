@@ -209,7 +209,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   headers: { Authorization: `L402 ${macaroon}:${preimage}` },
                 }
               );
-
+              console.log('response', response);
               if (!response.ok) {
                 throw new Error(
                   `Request failed with status ${response.status}`
@@ -226,6 +226,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                       }
                       controller.enqueue(value);
                       push();
+                    }).catch(e => {
+                      console.log('reader error', e);
                     });
                   }
 
