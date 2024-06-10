@@ -23,7 +23,6 @@ import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
-  const [progress, setProgress] = useState('0%');
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const [paymentHash, setPaymentHash] = useState('N/A');
@@ -548,16 +547,12 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         </form>
       </div>
       <Alert
-        open={successAlert}
-        onClose={!submitting ? handleCloseSuccess : () => {}}
-        title={'Payment successful'}
-        text={
-          submitting
-            ? 'The payment was successful! The file is being downloaded, please do not close this window.'
-            : 'Your file has been downloaded!'
-        }
-        button={!submitting ? 'Go back to Catalog' : ''}
-        theme={'success'}
+          open={successAlert}
+          onClose={handleCloseSuccess}
+          title={'Payment successful'}
+          text={'The payment was successful, your download will start shortly.'}
+          button={'Go back to Catalog'}
+          theme={'success'}
       />
       <Alert
         open={errorAlert}
