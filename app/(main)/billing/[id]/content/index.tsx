@@ -128,8 +128,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           return;
         });
 
-      setSubmitting(true);
-
       try {
         let l402Header = null;
 
@@ -204,13 +202,16 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   // TODO(pol) add error handling
                 });
 
+              setSubmitting(true);
+
               const response = await fetch(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
                 {
                   headers: { Authorization: `L402 ${macaroon}:${preimage}` },
                 }
               );
-
+              console.log('res', response);
+              console.log('res.headers', response.headers);
               const contentLength = response.headers.get('content-length');
               if (!contentLength) {
                 throw new Error('Content-Length response header is missing');
