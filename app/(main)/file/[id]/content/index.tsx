@@ -125,7 +125,7 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                   }
                 >
                   File Name:
-                  <span className={'ml-2 font-medium text-zinc-950'}>
+                  <span className={'ml-2 font-medium text-zinc-950 line-clamp-1 break-all'}>
                     {file.file_name}
                   </span>
                 </div>

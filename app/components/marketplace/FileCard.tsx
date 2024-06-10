@@ -44,9 +44,9 @@ export default function FileCard({ file }: { file: FileObject }) {
           <div className={'mb-2 text-base font-medium text-zinc-950'}>
             {file.name.replace(file.extension, '')}
           </div>
-          <div className={'mb-4 max-w-72 text-sm text-gray-400'}>
-            {file.description}
-          </div>
+          <div
+              className={'mb-4 max-w-72 text-sm text-gray-400 whitespace-pre-line'}
+              dangerouslySetInnerHTML={{ __html: file.description }}/>
           <div className={'mb-4 flex flex-wrap items-start gap-2'}>
             {file.tags
               ?.filter((tag) => !!tag)
