@@ -213,11 +213,11 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               console.log('res', response);
               console.log('res.headers', response.headers);
               const contentLength = response.headers.get('content-length');
-              if (!contentLength) {
-                throw new Error('Content-Length response header is missing');
+              let total = 0;
+              if (contentLength) {
+                total = parseInt(contentLength, 10);
               }
 
-              const total = parseInt(contentLength, 10);
               let loaded = 0;
 
               if (!response.ok) {
@@ -594,7 +594,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           open={submitting}
           onClose={handleCloseSuccess}
           title={'Almost there!'}
-          text={`Please wait! Your file is being prepared! ${progress}`}
+          text={`Please wait! Your file is being prepared!`}
           theme={'success'}
       />
       <Alert

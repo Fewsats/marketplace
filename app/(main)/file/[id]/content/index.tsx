@@ -89,9 +89,10 @@ const FileComponent = ({ file }: { file: FileObject }) => {
               <div className={'text-sm text-zinc-950'}>
                 {`Created: ${file.created_at ? new Date(file.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}`}
               </div>
-              <div className={'text-base font-light text-zinc-950'}>
-                {file.description}
-              </div>
+              <div
+                  className={'text-base font-light text-zinc-950 whitespace-pre-line'}
+                  dangerouslySetInnerHTML={{ __html: file.description }}
+              />
               <div className={'flex flex-wrap items-start gap-2'}>
                 {file.tags
                   ?.filter((tag) => !!tag)
