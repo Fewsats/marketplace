@@ -13,20 +13,22 @@ import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
 import { init, launchPaymentModal } from '@getalby/bitcoin-connect-react';
 import { Invoice } from '@getalby/lightning-tools';
+import FileSaver from 'file-saver';
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
 import formatPrice from '@/app/utils/formatPrice';
 import apiClient from '@/app/services/apiClient';
 import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
-import apiClientBlob from "@/app/services/apiClientBlob";
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
+  const [progress, setProgress] = useState('0%');
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const [paymentHash, setPaymentHash] = useState('N/A');
   const router = useRouter();
+  let timeout: null | any;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -204,28 +206,26 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   // TODO(pol) add error handling
                 });
 
-              setSuccessAlert(true);
-              apiClientBlob
-                .get(
-                  `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
-                  {
-                    headers: { Authorization: `L402 ${macaroon}:${preimage}` },
-                  }
-                )
-                .then((response) => {
-                  const blob = new Blob([response.data], {
-                    type: response.data.type,
-                  });
-                  const url = window.URL.createObjectURL(new Blob([blob]));
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = file.file_name;
-                  link.click();
+              timeout = setTimeout(() => {
+                setSuccessAlert(true);
+              }, 2000);
 
-                  // toast.success('Payment successful')
-                  console.log('setting success to true');
-                  setSubmitting(false);
-                });
+              const response = await fetch(
+                `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
+                {
+                  headers: { Authorization: `L402 ${macaroon}:${preimage}` },
+                }
+              );
+
+              if (!response.ok) {
+                throw new Error(
+                  `Request failed with status ${response.status}`
+                );
+              }
+
+              const blob = await response.blob();
+
+              FileSaver.saveAs(blob, file.file_name);
             },
             onCancelled: () => {
               setErrorAlert(true);
@@ -239,6 +239,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         setSubmitting(false);
         console.error(error);
       } finally {
+        clearTimeout(timeout);
       }
     },
   });
@@ -548,10 +549,14 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
       </div>
       <Alert
         open={successAlert}
-        onClose={handleCloseSuccess}
+        onClose={!submitting ? handleCloseSuccess : () => {}}
         title={'Payment successful'}
-        text={'The payment was successful, your download will start shortly.'}
-        button={'Go back to Catalog'}
+        text={
+          submitting
+            ? 'The payment was successful! The file is being downloaded, please do not close this window.'
+            : 'Your file has been downloaded!'
+        }
+        button={!submitting ? 'Go back to Catalog' : ''}
         theme={'success'}
       />
       <Alert
