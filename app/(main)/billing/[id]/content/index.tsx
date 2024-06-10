@@ -223,8 +223,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   link.download = file.file_name;
                   link.click();
 
-                  document.body.removeChild(link);
-
                   window.URL.revokeObjectURL(url);
 
                   // toast.success('Payment successful')
