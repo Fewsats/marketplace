@@ -218,7 +218,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               );
 
               if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(`Request failed with status ${response.status}`);
               }
               const reader = response.body?.getReader();
               const stream = new ReadableStream({
