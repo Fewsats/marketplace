@@ -9,7 +9,6 @@ import { useFormik } from 'formik';
 import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 import PrimaryButton from '@/app/components/buttons/PrimaryButton';
 import InputText from '@/app/components/inputs/InputText';
-import InputNumber from '@/app/components/inputs/InputNumber';
 import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
 import { init, launchPaymentModal } from '@getalby/bitcoin-connect-react';
@@ -38,36 +37,30 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
     () =>
       Yup.object().shape({
         email: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
           .email('Not a valid email')
-          .required('*Please enter required information'),
-        phone: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The email cannot contain only whitespace')
+          .required('*Please enter a valid email'),
         firstName: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The first name cannot contain only whitespace')
+          .required('*Please enter a valid first name'),
         lastName: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The last name cannot contain only whitespace')
+          .required('*Please enter a valid last name'),
         address: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The address cannot contain only whitespace')
+          .required('*Please enter a valid address'),
         country: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The country cannot contain only whitespace')
+          .required('*Please enter a valid country'),
         postalCode: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The ZIP code cannot contain only whitespace')
+          .required('*Please enter a valid ZIP code'),
         city: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The city cannot contain only whitespace')
+          .required('*Please enter a valid city'),
         state: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
-        company: Yup.string()
-          .matches(/^(.*)?\S+(.*)?$/, 'Field cannot be empty')
-          .required('*Please enter required information'),
+          .trim('The state cannot contain only whitespace')
+          .required('*Please enter a valid state'),
       }),
     []
   );
@@ -101,7 +94,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
     validateOnChange: false,
     validateOnBlur: false,
     enableReinitialize: true,
-    //validationSchema,
+    validationSchema,
     onSubmit: async (values, { resetForm, setErrors }) => {
       const data = {
         external_id: file.external_id,
@@ -218,7 +211,9 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               );
 
               if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
+                throw new Error(
+                  `Request failed with status ${response.status}`
+                );
               }
               const reader = response.body?.getReader();
               const stream = new ReadableStream({
@@ -464,14 +459,15 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               ZIP code
             </label>
             <div className='mt-1 flex-1'>
-              <InputNumber
+              <InputText
+                type={'text'}
                 name={'postalCode'}
                 id={'postalCode'}
                 placeholder={''}
                 value={formik.values.postalCode}
                 isError={!!formik.errors.postalCode}
                 // errorText={formik.errors.postalCode}
-                onChange={handleNumberChange('postalCode')}
+                onChange={handleInputChange('postalCode')}
               />
             </div>
           </div>
