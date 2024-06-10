@@ -128,6 +128,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           return;
         });
 
+      setSubmitting(true);
+
       try {
         let l402Header = null;
 
@@ -202,8 +204,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   // TODO(pol) add error handling
                 });
 
-              setSubmitting(true);
-
               const response = await fetch(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
                 {
@@ -225,6 +225,9 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   `Request failed with status ${response.status}`
                 );
               }
+
+              setSuccessAlert(true);
+
               const reader = response.body?.getReader();
               const stream = new ReadableStream({
                 start(controller) {
@@ -263,8 +266,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               document.body.removeChild(link);
 
               window.URL.revokeObjectURL(url);
-
-              setSuccessAlert(true);
             },
             onCancelled: () => {
               setErrorAlert(true);
