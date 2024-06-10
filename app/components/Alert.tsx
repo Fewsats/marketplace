@@ -18,7 +18,7 @@ export default function Alert({
   className,
 }: {
   open: boolean;
-  onClose: (() => void) | undefined;
+  onClose: () => void;
   title: string;
   text: string | JSX.Element;
   button?: string;

@@ -595,7 +595,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
       </div>
       <Alert
         open={successAlert}
-        onClose={!submitting ? handleCloseSuccess : undefined}
+        onClose={!submitting ? handleCloseSuccess : () => {}}
         title={'Payment successful'}
         text={
           submitting
