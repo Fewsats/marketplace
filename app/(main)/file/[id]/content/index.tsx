@@ -90,8 +90,10 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                 {`Created: ${file.created_at ? new Date(file.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}`}
               </div>
               <div
-                  className={'text-base font-light text-zinc-950 whitespace-pre-line'}
-                  dangerouslySetInnerHTML={{ __html: file.description }}
+                className={
+                  'whitespace-pre-line text-base font-light text-zinc-950'
+                }
+                dangerouslySetInnerHTML={{ __html: file.description }}
               />
               <div className={'flex flex-wrap items-start gap-2'}>
                 {file.tags
@@ -125,7 +127,7 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                   }
                 >
                   File Name:
-                  <span className={'ml-2 font-medium text-zinc-950 break-all'}>
+                  <span className={'ml-2 break-all font-medium text-zinc-950'}>
                     {file.file_name}
                   </span>
                 </div>
