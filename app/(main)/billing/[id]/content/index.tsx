@@ -13,14 +13,13 @@ import InputNumber from '@/app/components/inputs/InputNumber';
 import InputPhone from '@/app/components/inputs/InputPhone';
 import Alert from '@/app/components/Alert';
 import { init, launchPaymentModal } from '@getalby/bitcoin-connect-react';
-import { Invoice } from "@getalby/lightning-tools";
+import { Invoice } from '@getalby/lightning-tools';
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
 import formatPrice from '@/app/utils/formatPrice';
 import apiClient from '@/app/services/apiClient';
 import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
-import apiClientBlob from "@/app/services/apiClientBlob";
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
@@ -105,7 +104,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
     //validationSchema,
     onSubmit: async (values, { resetForm, setErrors }) => {
       const data = {
-        'external_id': file.external_id,
+        external_id: file.external_id,
         'contact.email': values.email.trim(),
         'contact.phone': values.phone.trim(),
         'contact.first_name': values.firstName.trim(),
@@ -123,19 +122,20 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         name: file.name,
         ...data,
       };
-      
-      await apiClient.post(`${process.env.API_URL}/v0/orders/marketplace`, payload)
-      .then(response => {
-        console.log('Payment info sent', response.data);
-      })
-      .catch(error => {
-        console.error('Failed to send payment info', error);
-        // TODO(pol) add error handling
-        return;
-      });
+
+      await apiClient
+        .post(`${process.env.API_URL}/v0/orders/marketplace`, payload)
+        .then((response) => {
+          console.log('Payment info sent', response.data);
+        })
+        .catch((error) => {
+          console.error('Failed to send payment info', error);
+          // TODO(pol) add error handling
+          return;
+        });
 
       setSubmitting(true);
-      
+
       try {
         let l402Header = null;
 
@@ -143,10 +143,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         await apiClient
           .get(`${process.env.API_URL}/v0/storage/download/${file.external_id}`)
           .catch((err) => {
-            console.log(
-              `err?.response?.status`,
-              err?.response?.status
-            );
+            console.log(`err?.response?.status`, err?.response?.status);
             console.log(
               ` err.response.headers['WWW-Authenticate']`,
               err.response.headers['WWW-Authenticate']
@@ -180,19 +177,18 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         console.log('macaroon:', macaroon);
         console.log('invoice:', invoice);
 
-        let localPaymentHash = ''
+        let localPaymentHash = '';
         if (invoice) {
           const invoiceObj = new Invoice({ pr: invoice });
-          localPaymentHash = invoiceObj?.paymentHash
+          localPaymentHash = invoiceObj?.paymentHash;
           setPaymentHash(localPaymentHash);
         }
-        
+
         if (macaroon && invoice) {
           launchPaymentModal({
             invoice,
             paymentMethods: 'internal',
             onPaid: async ({ preimage }) => {
-              
               const purchaseDetails = {
                 external_id: file.external_id,
                 payment_hash: localPaymentHash,
@@ -201,37 +197,64 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
               console.log('purchaseDetails', purchaseDetails);
 
-              await apiClient.post(`${process.env.API_URL}/v0/orders/purchases/marketplace`, purchaseDetails)
-                .then(response => {
+              await apiClient
+                .post(
+                  `${process.env.API_URL}/v0/orders/purchases/marketplace`,
+                  purchaseDetails
+                )
+                .then((response) => {
                   console.log('Purchase recorded', response.data);
                 })
-                .catch(error => {
+                .catch((error) => {
                   console.error('Failed to record purchase', error);
                   // TODO(pol) add error handling
                 });
 
-
-              apiClientBlob.get(
+              const response = await fetch(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
                 {
                   headers: { Authorization: `L402 ${macaroon}:${preimage}` },
-                },
-              )
-                  .then((response) => {
-                    const blob = new Blob([response.data], { type: response.data.type });
-                    const url = window.URL.createObjectURL(new Blob([blob]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = file.file_name; 
-                    link.click();
+                }
+              );
 
-                    // toast.success('Payment successful')
-                    console.log('setting success to true');
-                    setSuccessAlert(true);
-                  })
+              if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+              }
+              const reader = response.body?.getReader();
+              const stream = new ReadableStream({
+                start(controller) {
+                  function push() {
+                    reader?.read().then(({ done, value }) => {
+                      if (done) {
+                        controller.close();
+                        return;
+                      }
+                      controller.enqueue(value);
+                      push();
+                    });
+                  }
+
+                  push();
+                },
+              });
+
+              const newResponse = new Response(stream);
+              const blob = await newResponse.blob();
+              const url = window.URL.createObjectURL(blob);
+
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = file.file_name;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+
+              window.URL.revokeObjectURL(url);
+
+              console.log('setting success to true');
+              setSuccessAlert(true);
             },
             onCancelled: () => {
-              // toast.error('Payment cancelled')
               setErrorAlert(true);
             },
           });
@@ -553,9 +576,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         open={successAlert}
         onClose={handleCloseSuccess}
         title={'Payment successful'}
-        text={
-          'The payment was successful, your download will start shortly.'
-        }
+        text={'The payment was successful, your download will start shortly.'}
         button={'Go back to Catalog'}
         theme={'success'}
       />
@@ -564,7 +585,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         onClose={handleCloseError}
         title={'Payment failed'}
         text={
-          <div className="max-w-full break-words p-4 mx-auto">
+          <div className='mx-auto max-w-full break-words p-4'>
             We could not process your payment.
             <br />
             Please message us with the payment hash:
@@ -575,11 +596,10 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         }
         button={'Go back to File'}
         theme={'error'}
-        className="max-w-2xl break-words p-4 mx-auto"
+        className='mx-auto max-w-2xl break-words p-4'
       />
     </div>
   );
 };
 
 export default BillingComponent;
-

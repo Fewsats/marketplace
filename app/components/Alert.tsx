@@ -51,7 +51,9 @@ export default function Alert({
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
-              <Dialog.Panel className={`relative my-8 max-w-xl transform overflow-hidden rounded-lg bg-white p-4 shadow-md transition-all sm:w-full sm:p-9 ${className}`}>
+              <Dialog.Panel
+                className={`relative my-8 max-w-xl transform overflow-hidden rounded-lg bg-white p-4 shadow-md transition-all sm:w-full sm:p-9 ${className}`}
+              >
                 <div className='flex flex-col items-center'>
                   <div
                     className={`mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${theme === 'success' ? 'bg-emerald-100' : 'bg-red-100'} sm:mx-0`}
