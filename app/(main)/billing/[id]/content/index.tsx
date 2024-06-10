@@ -22,6 +22,7 @@ import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
+  const [progress, setProgress] = useState('0%');
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const [paymentHash, setPaymentHash] = useState('N/A');
@@ -127,8 +128,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           return;
         });
 
-      setSubmitting(true);
-
       try {
         let l402Header = null;
 
@@ -203,13 +202,24 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   // TODO(pol) add error handling
                 });
 
+              setSubmitting(true);
+
               const response = await fetch(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
                 {
                   headers: { Authorization: `L402 ${macaroon}:${preimage}` },
                 }
               );
-              console.log('response', response);
+              console.log('res', response);
+              console.log('res.headers', response.headers);
+              const contentLength = response.headers.get('content-length');
+              if (!contentLength) {
+                throw new Error('Content-Length response header is missing');
+              }
+
+              const total = parseInt(contentLength, 10);
+              let loaded = 0;
+
               if (!response.ok) {
                 throw new Error(
                   `Request failed with status ${response.status}`
@@ -222,8 +232,14 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                     reader?.read().then(({ done, value }) => {
                       if (done) {
                         controller.close();
+                        setSubmitting(false);
+                        setSuccessAlert(true);
+                        console.log('setting success to true');
                         return;
                       }
+                      loaded += value.byteLength;
+                      setProgress((loaded / total) * 100  + '%');
+
                       controller.enqueue(value);
                       push();
                     }).catch(e => {
@@ -247,22 +263,18 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               document.body.removeChild(link);
 
               window.URL.revokeObjectURL(url);
-
-              console.log('setting success to true');
-              setSuccessAlert(true);
             },
             onCancelled: () => {
               setErrorAlert(true);
+              setSubmitting(false);
             },
           });
         }
       } catch (error) {
         // toast.error(error?.response?.data?.error || 'Payment unsuccessful')
         setErrorAlert(true);
-        console.error(error);
-      } finally {
         setSubmitting(false);
-        // toast.dismiss(id)
+        console.error(error);
       }
     },
   });
@@ -577,6 +589,13 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         text={'The payment was successful, your download will start shortly.'}
         button={'Go back to Catalog'}
         theme={'success'}
+      />
+      <Alert
+          open={submitting}
+          onClose={handleCloseSuccess}
+          title={'Almost there!'}
+          text={`Please wait! Your file is being prepared! ${progress}`}
+          theme={'success'}
       />
       <Alert
         open={errorAlert}
