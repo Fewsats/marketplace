@@ -5,7 +5,7 @@ export default function parseWWWAuthenticateHeader(inputString: string) {
 
   // Check if the input string is empty
   if (!inputString) {
-    throw new Error("No WWW-Authenticate header found");
+    throw new Error('No WWW-Authenticate header found');
   }
 
   // Extracting macaroon and invoice using regex
@@ -14,7 +14,7 @@ export default function parseWWWAuthenticateHeader(inputString: string) {
 
   // Check if both macaroon and invoice are found
   if (!macaroonMatches || !invoiceMatches) {
-    throw new Error("Missing macaroon or invoice in the header");
+    throw new Error('Missing macaroon or invoice in the header');
   }
 
   // Extracting the values from the regex matches
