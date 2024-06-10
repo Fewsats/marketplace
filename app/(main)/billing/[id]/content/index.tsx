@@ -204,6 +204,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   // TODO(pol) add error handling
                 });
 
+              setSuccessAlert(true);
               apiClientBlob
                 .get(
                   `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
@@ -212,8 +213,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   }
                 )
                 .then((response) => {
-                  setSuccessAlert(true);
-
                   const blob = new Blob([response.data], {
                     type: response.data.type,
                   });
