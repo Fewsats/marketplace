@@ -27,6 +27,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
   const [errorAlert, setErrorAlert] = useState(false);
   const [paymentHash, setPaymentHash] = useState('N/A');
   const router = useRouter();
+  let timeout: null | any;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -226,28 +227,33 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                 );
               }
 
-              setSuccessAlert(true);
+              timeout = setTimeout(() => {
+                setSuccessAlert(true);
+              }, 2000);
 
               const reader = response.body?.getReader();
               const stream = new ReadableStream({
                 start(controller) {
                   function push() {
-                    reader?.read().then(({ done, value }) => {
-                      if (done) {
-                        controller.close();
-                        setSubmitting(false);
+                    reader
+                      ?.read()
+                      .then(({ done, value }) => {
+                        if (done) {
+                          controller.close();
+                          setSubmitting(false);
 
-                        console.log('setting success to true');
-                        return;
-                      }
-                      loaded += value.byteLength;
-                      setProgress((loaded / total) * 100  + '%');
+                          console.log('setting success to true');
+                          return;
+                        }
+                        loaded += value.byteLength;
+                        setProgress((loaded / total) * 100 + '%');
 
-                      controller.enqueue(value);
-                      push();
-                    }).catch(e => {
-                      console.log('reader error', e);
-                    });
+                        controller.enqueue(value);
+                        push();
+                      })
+                      .catch((e) => {
+                        console.log('reader error', e);
+                      });
                   }
 
                   push();
@@ -278,6 +284,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         setErrorAlert(true);
         setSubmitting(false);
         console.error(error);
+      } finally {
+        clearTimeout(timeout);
       }
     },
   });
@@ -587,13 +595,13 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
       </div>
       <Alert
         open={successAlert}
-        onClose={handleCloseSuccess}
+        onClose={!submitting ? handleCloseSuccess : undefined}
         title={'Payment successful'}
         text={
-        submitting ?
-        'The payment was successful! The file is being downloaded, please do not close this window.'
+          submitting
+            ? 'The payment was successful! The file is being downloaded, please do not close this window.'
             : 'Your file has been downloaded!'
-      }
+        }
         button={!submitting ? 'Go back to Catalog' : ''}
         theme={'success'}
       />

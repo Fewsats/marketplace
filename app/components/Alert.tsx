@@ -18,7 +18,7 @@ export default function Alert({
   className,
 }: {
   open: boolean;
-  onClose: () => void;
+  onClose: (() => void) | undefined;
   title: string;
   text: string | JSX.Element;
   button?: string;
@@ -89,11 +89,11 @@ export default function Alert({
                     </p>
                   </div>
                 </div>
-                {button &&
-                    <div className='mt-6 flex justify-end space-x-6'>
-                      <PrimaryButton action={onClose} buttonText={button} />
-                    </div>
-                }
+                {button && (
+                  <div className='mt-6 flex justify-end space-x-6'>
+                    <PrimaryButton action={onClose} buttonText={button} />
+                  </div>
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>
