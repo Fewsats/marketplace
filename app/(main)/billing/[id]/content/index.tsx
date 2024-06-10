@@ -19,6 +19,7 @@ import { FileObject } from '@/app/types';
 import formatPrice from '@/app/utils/formatPrice';
 import apiClient from '@/app/services/apiClient';
 import parseWWWAuthenticateHeader from '@/app/utils/parseWWWAuthenticateHeader';
+import apiClientBlob from "@/app/services/apiClientBlob";
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
@@ -205,73 +206,32 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   // TODO(pol) add error handling
                 });
 
-              const response = await fetch(
-                `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
-                {
-                  headers: { Authorization: `L402 ${macaroon}:${preimage}` },
-                }
-              );
-              console.log('res', response);
-              console.log('res.headers', response.headers);
-              const contentLength = response.headers.get('content-length');
-              let total = 0;
-              if (contentLength) {
-                total = parseInt(contentLength, 10);
-              }
-
-              let loaded = 0;
-
-              if (!response.ok) {
-                throw new Error(
-                  `Request failed with status ${response.status}`
-                );
-              }
-
-              timeout = setTimeout(() => {
-                setSuccessAlert(true);
-              }, 2000);
-
-              const reader = response.body?.getReader();
-              const stream = new ReadableStream({
-                start(controller) {
-                  function push() {
-                    reader
-                      ?.read()
-                      .then(({ done, value }) => {
-                        if (done) {
-                          controller.close();
-                          setSubmitting(false);
-
-                          console.log('setting success to true');
-                          return;
-                        }
-                        loaded += value.byteLength;
-                        setProgress((loaded / total) * 100 + '%');
-
-                        controller.enqueue(value);
-                        push();
-                      })
-                      .catch((e) => {
-                        console.log('reader error', e);
-                      });
+              apiClientBlob
+                .get(
+                  `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
+                  {
+                    headers: { Authorization: `L402 ${macaroon}:${preimage}` },
                   }
+                )
+                .then((response) => {
+                  const blob = new Blob([response.data], {
+                    type: response.data.type,
+                  });
+                  const url = window.URL.createObjectURL(new Blob([blob]));
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = file.file_name;
+                  link.click();
 
-                  push();
-                },
-              });
+                  document.body.removeChild(link);
 
-              const newResponse = new Response(stream);
-              const blob = await newResponse.blob();
-              const url = window.URL.createObjectURL(blob);
+                  window.URL.revokeObjectURL(url);
 
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = file.file_name;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-
-              window.URL.revokeObjectURL(url);
+                  // toast.success('Payment successful')
+                  console.log('setting success to true');
+                  setSuccessAlert(true);
+                  setSubmitting(false);
+                });
             },
             onCancelled: () => {
               setErrorAlert(true);
@@ -595,14 +555,10 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
       </div>
       <Alert
         open={successAlert}
-        onClose={!submitting ? handleCloseSuccess : () => {}}
+        onClose={handleCloseSuccess}
         title={'Payment successful'}
-        text={
-          submitting
-            ? 'The payment was successful! The file is being downloaded, please do not close this window.'
-            : 'Your file has been downloaded!'
-        }
-        button={!submitting ? 'Go back to Catalog' : ''}
+        text={'The payment was successful, your download will start shortly.'}
+        button={'Go back to Catalog'}
         theme={'success'}
       />
       <Alert
