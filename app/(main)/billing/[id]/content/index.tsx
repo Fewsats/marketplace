@@ -233,7 +233,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                       if (done) {
                         controller.close();
                         setSubmitting(false);
-                        setSuccessAlert(true);
+
                         console.log('setting success to true');
                         return;
                       }
@@ -263,6 +263,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               document.body.removeChild(link);
 
               window.URL.revokeObjectURL(url);
+
+              setSuccessAlert(true);
             },
             onCancelled: () => {
               setErrorAlert(true);
@@ -586,16 +588,13 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         open={successAlert}
         onClose={handleCloseSuccess}
         title={'Payment successful'}
-        text={'The payment was successful, your download will start shortly.'}
-        button={'Go back to Catalog'}
+        text={
+        submitting ?
+        'The payment was successful! The file is being downloaded, please do not close this window.'
+            : 'Your file has been downloaded!'
+      }
+        button={!submitting ? 'Go back to Catalog' : ''}
         theme={'success'}
-      />
-      <Alert
-          open={submitting}
-          onClose={handleCloseSuccess}
-          title={'Almost there!'}
-          text={`Please wait! Your file is being prepared!`}
-          theme={'success'}
       />
       <Alert
         open={errorAlert}
@@ -608,7 +607,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
             Please message us with the payment hash:
             <br />
             <br />
-            {paymentHash}
+            <span className={'break-all text-center'}>{paymentHash}</span>
           </div>
         }
         button={'Go back to File'}
