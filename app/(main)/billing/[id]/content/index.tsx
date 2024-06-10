@@ -207,7 +207,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
               timeout = setTimeout(() => {
                 setSuccessAlert(true);
-              }, 2000);
+              }, 3000);
 
               const response = await fetch(
                 `${process.env.API_URL}/v0/storage/download/${file.external_id}`,
