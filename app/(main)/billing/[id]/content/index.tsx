@@ -214,6 +214,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   }
                 )
                 .then((response) => {
+                  setSuccessAlert(true);
+
                   const blob = new Blob([response.data], {
                     type: response.data.type,
                   });
@@ -229,7 +231,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
                   // toast.success('Payment successful')
                   console.log('setting success to true');
-                  setSuccessAlert(true);
                   setSubmitting(false);
                 });
             },
