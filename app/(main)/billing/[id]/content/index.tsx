@@ -225,6 +225,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
               const blob = await response.blob();
 
               FileSaver.saveAs(blob, file.file_name);
+              setSubmitting(false);
             },
             onCancelled: () => {
               setErrorAlert(true);
@@ -548,10 +549,14 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
       </div>
       <Alert
           open={successAlert}
-          onClose={handleCloseSuccess}
+          onClose={!submitting ? handleCloseSuccess : () => {}}
           title={'Payment successful'}
-          text={'The payment was successful, your download will start shortly.'}
-          button={'Go back to Catalog'}
+          text={
+            submitting
+                ? 'The payment was successful! The file is being downloaded, please do not close this window.'
+                : 'Your file has been downloaded!'
+          }
+          button={!submitting ? 'Go back to Catalog' : ''}
           theme={'success'}
       />
       <Alert
