@@ -594,7 +594,7 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
           open={submitting}
           onClose={handleCloseSuccess}
           title={'Almost there!'}
-          text={`Please wait! Your file is being prepared! ${progress}`}
+          text={`Please wait! Your file is being prepared!`}
           theme={'success'}
       />
       <Alert
