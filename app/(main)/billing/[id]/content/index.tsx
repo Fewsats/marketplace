@@ -23,12 +23,10 @@ import apiClientBlob from "@/app/services/apiClientBlob";
 
 const BillingComponent = ({ file }: { file: FileObject }) => {
   const [submitting, setSubmitting] = useState(false);
-  const [progress, setProgress] = useState('0%');
   const [successAlert, setSuccessAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
   const [paymentHash, setPaymentHash] = useState('N/A');
   const router = useRouter();
-  let timeout: null | any;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -214,6 +212,8 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
                   }
                 )
                 .then((response) => {
+                  setSuccessAlert(true);
+
                   const blob = new Blob([response.data], {
                     type: response.data.type,
                   });
@@ -229,7 +229,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
 
                   // toast.success('Payment successful')
                   console.log('setting success to true');
-                  setSuccessAlert(true);
                   setSubmitting(false);
                 });
             },
@@ -245,7 +244,6 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         setSubmitting(false);
         console.error(error);
       } finally {
-        clearTimeout(timeout);
       }
     },
   });
