@@ -46,7 +46,7 @@ export default function FileCard({ file }: { file: FileObject }) {
           </div>
           <div
             className={
-              'mb-4 text-sm text-gray-400 line-clamp-5 h-25 text-justify'
+              'mb-4 text-sm text-gray-400 line-clamp-5 h-25'
             }
             dangerouslySetInnerHTML={{ __html: file.description }}
           />
