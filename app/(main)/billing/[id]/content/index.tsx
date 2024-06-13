@@ -548,16 +548,16 @@ const BillingComponent = ({ file }: { file: FileObject }) => {
         </form>
       </div>
       <Alert
-          open={successAlert}
-          onClose={!submitting ? handleCloseSuccess : () => {}}
-          title={'Payment successful'}
-          text={
-            submitting
-                ? 'The payment was successful! The file is being downloaded, please do not close this window.'
-                : 'Your file has been downloaded!'
-          }
-          button={!submitting ? 'Go back to Catalog' : ''}
-          theme={'success'}
+        open={successAlert}
+        onClose={!submitting ? handleCloseSuccess : () => {}}
+        title={'Payment successful'}
+        text={
+          submitting
+            ? 'The payment was successful! The file is being downloaded, please do not close this window.'
+            : 'Your file has been downloaded!'
+        }
+        button={!submitting ? 'Go back to Catalog' : ''}
+        theme={'success'}
       />
       <Alert
         open={errorAlert}

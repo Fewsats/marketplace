@@ -26,8 +26,8 @@ const config: Config = {
         'screen-1xl': '1440px',
       },
       height: {
-        '25': '100px'
-      }
+        '25': '100px',
+      },
     },
   },
   plugins: [forms, lineClamp],
