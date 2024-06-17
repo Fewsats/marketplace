@@ -35,7 +35,7 @@ export default async function FilePage({ params }: { params: { id: string } }) {
   const id = params.id;
   const data = id && (await fetchFile(id));
 
-  if (!data) {
+  if (!data || data?.file.status === 'in_review') {
     notFound();
   }
 

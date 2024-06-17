@@ -24,5 +24,5 @@ export default async function CatalogPage() {
   revalidateTag('files');
   const data = await fetchFiles();
 
-  return <CatalogComponent files={data?.files} />;
+  return <CatalogComponent files={data?.files.filter((file) => file.status !== 'in_review')} />;
 }
