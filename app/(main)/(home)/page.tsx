@@ -2,6 +2,7 @@
 
 import { revalidateTag } from 'next/cache';
 import CatalogComponent from '@/app/(main)/(home)/content';
+import { FileObject } from '@/app/types';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
@@ -24,5 +25,11 @@ export default async function CatalogPage() {
   revalidateTag('files');
   const data = await fetchFiles();
 
-  return <CatalogComponent files={data?.files.filter((file) => file.status !== 'in_review')} />;
+  return (
+    <CatalogComponent
+      files={data?.files.filter(
+        (file: FileObject) => file.status !== 'in_review'
+      )}
+    />
+  );
 }

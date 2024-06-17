@@ -12,6 +12,7 @@ export interface FileObject {
   tags: string[];
   cover_url?: string;
   file?: string;
+  status: string;
 }
 
 export interface StorageState {
