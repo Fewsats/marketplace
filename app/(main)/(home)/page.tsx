@@ -3,10 +3,27 @@
 import { revalidateTag } from 'next/cache';
 import CatalogComponent from '@/app/(main)/(home)/content';
 
+const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000';
+
 export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
-    title: 'Catalog',
-  };
+    metadataBase,
+    title: 'Fewsats Marketplace Catalog',
+    openGraph: {
+      title: 'Fewsats Marketplace Catalog',
+      type: 'website',
+      url: `${metadataBase}`,
+      description: 'Fewsats Marketplace Catalog',
+      siteName: 'Fewsats Marketplace',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Fewsats Marketplace Catalog',
+      description: 'Fewsats Marketplace Catalog',
+      site: '@fewsats',
+      creator: '@fewsats',
+    },
+  }
 }
 
 async function fetchFiles() {
