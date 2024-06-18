@@ -2,6 +2,7 @@
 
 import { revalidateTag } from 'next/cache';
 import CatalogComponent from '@/app/(main)/(home)/content';
+import { FileObject } from '@/app/types';
 
 const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -43,5 +44,11 @@ export default async function CatalogPage() {
   revalidateTag('files');
   const data = await fetchFiles();
 
-  return <CatalogComponent files={data?.files} />;
+  return (
+    <CatalogComponent
+      files={data?.files.filter(
+        (file: FileObject) => file.status === 'valid'
+      )}
+    />
+  );
 }

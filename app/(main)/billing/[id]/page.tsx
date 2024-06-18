@@ -54,7 +54,7 @@ export default async function BillingPage({
   const id = params.id;
   const data = id && (await fetchFile(id));
 
-  if (!data) {
+  if (!data || data?.file.status !== 'valid') {
     notFound();
   }
 

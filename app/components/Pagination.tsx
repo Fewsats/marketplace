@@ -112,7 +112,7 @@ export default function Pagination({
       </ul>
       <button
         onClick={onNext}
-        className={`-mt-px ml-10 flex flex-1 justify-end py-4 ${currentPage === totalPages ? 'pointer-events-none opacity-50' : 'opacity-1'} transition-all`}
+        className={`-mt-px ml-10 flex flex-1 justify-end py-4 ${!totalPages || currentPage === totalPages ? 'pointer-events-none opacity-50' : 'opacity-1'} transition-all`}
       >
         <span
           className={`inline-flex items-center border-t-2 border-transparent pl-1 text-sm font-semibold text-zinc-950 hover:text-violet-600`}
