@@ -16,17 +16,28 @@ async function fetchFile(id: string) {
   return res.json();
 }
 
+const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000';
+
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const data: { file: FileObject } = await fetchFile(params.id);
 
-  if (!data?.file) {
-    return {
-      title: 'Billing',
-    };
-  }
-
   return {
-    title: 'Billing ' + data.file.name.replace(data.file.extension, ''),
+    metadataBase,
+    title: 'Fewsats Billing ' + data.file.name.replace(data.file.extension, ''),
+    openGraph: {
+      title: 'Fewsats Billing ' + data.file.name.replace(data.file.extension, ''),
+      type: 'website',
+      url: `${metadataBase}/billing/${data.file.external_id}`,
+      description: data.file.description,
+      siteName: 'Fewsats Marketplace',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Fewsats Billing ' + data.file.name.replace(data.file.extension, ''),
+      description: data.file.description,
+      site: '@fewsats',
+      creator: '@fewsats',
+    },
   };
 }
 

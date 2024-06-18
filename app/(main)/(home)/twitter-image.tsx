@@ -5,7 +5,7 @@ import React from 'react';
 export const alt = 'Fewsats Marketplace'
 export const size = {
     width: 1200,
-    height: 630,
+    height: 628,
 };
 
 // Define runtime options
@@ -29,7 +29,7 @@ export default async function Image() {
             >
                 <img
                     src={`${metadataBase}/opengraph-main.png`}
-                    alt="Fewsats Marketplace"
+                    alt={alt}
                     style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                     width={size.width}
                     height={size.height}
