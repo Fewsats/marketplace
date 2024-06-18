@@ -3,7 +3,9 @@
 import { revalidateTag } from 'next/cache';
 import CatalogComponent from '@/app/(main)/(home)/content';
 
-const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000';
+const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : 'http://localhost:3000';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
@@ -23,7 +25,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
       site: '@fewsats',
       creator: '@fewsats',
     },
-  }
+  };
 }
 
 async function fetchFiles() {

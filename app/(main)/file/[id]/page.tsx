@@ -5,7 +5,9 @@ import { revalidateTag } from 'next/cache';
 import FileComponent from '@/app/(main)/file/[id]/content';
 import { FileObject } from '@/app/types';
 
-const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000';
+const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : 'http://localhost:3000';
 
 async function fetchFile(id: string) {
   const res = await fetch(`${process.env.API_URL}/v0/storage/${id}`, {

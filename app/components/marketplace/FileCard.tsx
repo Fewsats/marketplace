@@ -41,13 +41,15 @@ export default function FileCard({ file }: { file: FileObject }) {
       </div>
       <div className={'flex w-full flex-1 flex-col justify-between p-5'}>
         <div>
-          <div className={'mb-2 text-base font-medium text-zinc-950 line-clamp-2 h-12'}>
+          <div
+            className={
+              'mb-2 line-clamp-2 h-12 text-base font-medium text-zinc-950'
+            }
+          >
             {file.name.replace(file.extension, '')}
           </div>
           <div
-            className={
-              'mb-4 text-sm text-gray-400 line-clamp-5 h-25'
-            }
+            className={'mb-4 line-clamp-5 h-25 text-sm text-gray-400'}
             dangerouslySetInnerHTML={{ __html: file.description }}
           />
           <div className={'mb-4 flex flex-wrap items-start gap-2'}>
