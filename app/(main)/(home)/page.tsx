@@ -28,7 +28,7 @@ export default async function CatalogPage() {
   return (
     <CatalogComponent
       files={data?.files.filter(
-        (file: FileObject) => file.status !== 'in_review'
+        (file: FileObject) => file.status === 'valid'
       )}
     />
   );
