@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
       title:
         data.file.name.replace(data.file.extension, ''),
       type: 'website',
-      url: `${metadataBase}/billing/${data.file.external_id}`,
+      url: `${metadataBase}billing/${data.file.external_id}`,
       description: data.file.description.replace(/\r\n/g, ''),
       siteName: 'Fewsats Marketplace',
     },
