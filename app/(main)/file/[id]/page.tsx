@@ -24,7 +24,10 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   const data: { file: FileObject } = await fetchFile(params.id);
 
   return {
-    metadataBase: `${metadataBase}/`,
+    metadataBase: new URL(`${metadataBase}`),
+    alternates: {
+      canonical: `/file/${data.file.external_id}`,
+    },
     title: data.file.name.replace(data.file.extension, ''),
     description: data.file.description.replace(/\r\n/g, ''),
     openGraph: {
