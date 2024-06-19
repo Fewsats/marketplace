@@ -24,21 +24,25 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   const data: { file: FileObject } = await fetchFile(params.id);
 
   return {
-    metadataBase,
-    title: 'Fewsats Billing ' + data.file.name.replace(data.file.extension, ''),
+    metadataBase: new URL(`${metadataBase}`),
+    alternates: {
+      canonical: `/billing/${data.file.external_id}`,
+    },
+    title: data.file.name.replace(data.file.extension, ''),
+    description: data.file.description.replace(/\r\n/g, ''),
     openGraph: {
       title:
-        'Fewsats Billing ' + data.file.name.replace(data.file.extension, ''),
+        data.file.name.replace(data.file.extension, ''),
       type: 'website',
       url: `${metadataBase}/billing/${data.file.external_id}`,
-      description: data.file.description,
-      siteName: 'Fewsats Marketplace',
+      description: data.file.description.replace(/\r\n/g, ''),
+      siteName: 'Marketplace.fewsats.com',
     },
     twitter: {
       card: 'summary_large_image',
       title:
-        'Fewsats Billing ' + data.file.name.replace(data.file.extension, ''),
-      description: data.file.description,
+        data.file.name.replace(data.file.extension, ''),
+      description: data.file.description.replace(/\r\n/g, ''),
       site: '@fewsats',
       creator: '@fewsats',
     },

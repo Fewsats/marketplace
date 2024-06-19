@@ -10,19 +10,23 @@ const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
-    metadataBase,
-    title: 'Fewsats Marketplace Catalog',
+    metadataBase: new URL(`${metadataBase}`),
+    alternates: {
+      canonical: '/',
+    },
+    title: 'Fewsats Marketplace',
+    description: 'Discover and purchase a wide range of digital content, including ebooks, paintings, and more from providers worldwide. Transactions are secure and delivery is immediate through the Fewsats platform & L402 protocol. Explore the marketplace to find the digital assets you need for your projects and applications.',
     openGraph: {
-      title: 'Fewsats Marketplace Catalog',
+      title: 'Marketplace.fewsats.com Buy digital content instantly',
       type: 'website',
-      url: `${metadataBase}`,
-      description: 'Fewsats Marketplace Catalog',
-      siteName: 'Fewsats Marketplace',
+      url: `${metadataBase}/`,
+      description: 'Discover and purchase a wide range of digital content, including ebooks, paintings, and more from providers worldwide. Transactions are secure and delivery is immediate through the Fewsats platform & L402 protocol. Explore the marketplace to find the digital assets you need for your projects and applications.',
+      siteName: 'Marketplace.fewsats.com',
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Fewsats Marketplace Catalog',
-      description: 'Fewsats Marketplace Catalog',
+      title: 'Marketplace.fewsats.com Buy digital content instantly',
+      description: 'Discover and purchase a wide range of digital content, including ebooks, paintings, and more from providers worldwide. Transactions are secure and delivery is immediate through the Fewsats platform & L402 protocol. Explore the marketplace to find the digital assets you need for your projects and applications.',
       site: '@fewsats',
       creator: '@fewsats',
     },
