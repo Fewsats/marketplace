@@ -6,8 +6,8 @@ import FileComponent from '@/app/(main)/file/[id]/content';
 import { FileObject } from '@/app/types';
 
 const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : 'http://localhost:3000';
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/`
+  : 'http://localhost:3000/';
 
 async function fetchFile(id: string) {
   const res = await fetch(`${process.env.API_URL}/v0/storage/${id}`, {
@@ -25,18 +25,19 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
   return {
     metadataBase,
-    title: 'Fewsats File ' + data.file.name.replace(data.file.extension, ''),
+    title: data.file.name.replace(data.file.extension, ''),
+    description: data.file.description.replace(/\r\n/g, ''),
     openGraph: {
-      title: 'Fewsats File ' + data.file.name.replace(data.file.extension, ''),
+      title: data.file.name.replace(data.file.extension, ''),
       type: 'website',
       url: `${metadataBase}/file/${data.file.external_id}`,
-      description: data.file.description,
+      description: data.file.description.replace(/\r\n/g, ''),
       siteName: 'Fewsats Marketplace',
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Fewsats File ' + data.file.name.replace(data.file.extension, ''),
-      description: data.file.description,
+      title: data.file.name.replace(data.file.extension, ''),
+      description: data.file.description.replace(/\r\n/g, ''),
       site: '@fewsats',
       creator: '@fewsats',
     },

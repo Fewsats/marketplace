@@ -12,8 +12,8 @@ export const size = {
 export const runtime = 'edge';
 
 const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : 'http://localhost:3000';
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/`
+  : 'http://localhost:3000/';
 
 // Function to generate the image
 export default async function Image() {
@@ -31,7 +31,7 @@ export default async function Image() {
         }}
       >
         <img
-          src={`${metadataBase}/images/CatalogBackground.png`}
+          src={`${metadataBase}images/CatalogBackground.png`}
           alt={alt}
           style={{
             objectFit: 'cover',
