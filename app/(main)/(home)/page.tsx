@@ -36,19 +36,29 @@ async function fetchFiles() {
       'Content-Type': 'application/json',
     },
   });
+
   if (!res?.ok) return undefined;
   return res.json();
 }
 
-export default async function CatalogPage() {
+export default async function CatalogPage({
+  searchParams,
+}: {
+  searchParams: { search?: string };
+}) {
   revalidateTag('files');
   const data = await fetchFiles();
+  const searchQuery = searchParams.search;
 
   return (
     <CatalogComponent
-      files={data?.files.filter(
-        (file: FileObject) => file.status === 'valid'
-      )}
+      files={data?.files
+        .filter((file: FileObject) => file.status === 'valid')
+        .filter((file: FileObject) =>
+          searchQuery
+            ? file.name.toLowerCase().includes(searchQuery.toLowerCase())
+            : true
+        )}
     />
   );
 }

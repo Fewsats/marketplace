@@ -12,21 +12,33 @@ import { FileObject, Option } from '@/app/types';
 import { FILTER_SORT_OPTIONS, SEARCH_DEBOUNCE } from '@/constants/constants';
 // UTILS
 import debounce from 'lodash.debounce';
+import { useSearchParams } from 'next/navigation';
 
 const CatalogComponent = ({ files }: { files: FileObject[] }) => {
   const values = useMemo(() => files || [], [files]);
+  const searchParams = useSearchParams();
+  const searchQuery = useSearchParams().get('search');
 
   const [filters, setFilters] = useState({
-    search: '',
     sort: 'date',
   });
-  const handleInputChange =
-    (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFilters((prev) => ({
-        ...prev,
-        [name]: event.target.value,
-      }));
-    };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+    const value = event.target.value.trim();
+
+    if (!value) {
+      current.delete('search');
+    } else {
+      current.set('search', event.target.value);
+    }
+
+    const search = current.toString();
+    const query = search ? `?${search}` : '';
+    // router.push() doesn't support shallow option anymore, to avoid triggering page reload use window.history.pushState
+    window.history.pushState({}, '', window.location.pathname + query);
+  };
 
   const handleFilterChange = (name: string) => (value: Option) => {
     setFilters({ ...filters, [name]: value.id });
@@ -35,10 +47,10 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
   const [filteredValues, setFilteredValues] = useState(values);
 
   const setFiltersDebounced = useRef(
-    debounce(({ filters, values }) => {
+    debounce(({ filters, values, searchQuery }) => {
       const filtered = values.filter((item: FileObject) => {
-        return filters.search
-          ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+        return searchQuery
+          ? item.name.toLowerCase().includes(searchQuery.toLowerCase())
           : true;
       });
       const sorted =
@@ -59,8 +71,8 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
   );
 
   useEffect(() => {
-    setFiltersDebounced.current({ filters, values });
-  }, [filters, values]);
+    setFiltersDebounced.current({ filters, values, searchQuery });
+  }, [filters, values, searchQuery]);
 
   return (
     <div className={'h-full min-h-screen w-full flex-col'}>
@@ -106,8 +118,8 @@ const CatalogComponent = ({ files }: { files: FileObject[] }) => {
               placeholder={'Search by file name or tags'}
               type='search'
               name='search'
-              value={filters.search}
-              onChange={handleInputChange('search')}
+              defaultValue={searchQuery || ''}
+              onChange={handleChange}
             />
           </div>
           <div

@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 bc-payment {
-    word-break: break-word !important;
+  word-break: break-word !important;
 }
