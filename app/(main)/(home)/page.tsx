@@ -9,13 +9,13 @@ const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   return {
-    metadataBase,
+    metadataBase: `${metadataBase}/`,
     title: 'Fewsats Marketplace',
     description: 'Discover and purchase a wide range of digital content, including ebooks, paintings, and more from providers worldwide. Transactions are secure and delivery is immediate through the Fewsats platform & L402 protocol. Explore the marketplace to find the digital assets you need for your projects and applications.',
     openGraph: {
       title: 'Marketplace.fewsats.com Buy digital content instantly',
       type: 'website',
-      url: `${metadataBase}`,
+      url: `${metadataBase}/`,
       description: 'Discover and purchase a wide range of digital content, including ebooks, paintings, and more from providers worldwide. Transactions are secure and delivery is immediate through the Fewsats platform & L402 protocol. Explore the marketplace to find the digital assets you need for your projects and applications.',
       siteName: 'Fewsats Marketplace',
     },

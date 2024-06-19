@@ -17,21 +17,21 @@ async function fetchFile(id: string) {
 }
 
 const metadataBase = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/`
-  : 'http://localhost:3000/';
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : 'http://localhost:3000';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const data: { file: FileObject } = await fetchFile(params.id);
 
   return {
-    metadataBase,
+    metadataBase: `${metadataBase}/`,
     title: data.file.name.replace(data.file.extension, ''),
     description: data.file.description.replace(/\r\n/g, ''),
     openGraph: {
       title:
         data.file.name.replace(data.file.extension, ''),
       type: 'website',
-      url: `${metadataBase}billing/${data.file.external_id}`,
+      url: `${metadataBase}/billing/${data.file.external_id}`,
       description: data.file.description.replace(/\r\n/g, ''),
       siteName: 'Fewsats Marketplace',
     },
