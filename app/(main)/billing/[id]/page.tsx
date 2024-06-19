@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
       type: 'website',
       url: `${metadataBase}/billing/${data.file.external_id}`,
       description: data.file.description.replace(/\r\n/g, ''),
-      siteName: 'Fewsats Marketplace',
+      siteName: 'Marketplace.fewsats.com',
     },
     twitter: {
       card: 'summary_large_image',

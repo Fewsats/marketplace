@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
       type: 'website',
       url: `${metadataBase}/`,
       description: 'Discover and purchase a wide range of digital content, including ebooks, paintings, and more from providers worldwide. Transactions are secure and delivery is immediate through the Fewsats platform & L402 protocol. Explore the marketplace to find the digital assets you need for your projects and applications.',
-      siteName: 'Fewsats Marketplace',
+      siteName: 'Marketplace.fewsats.com',
     },
     twitter: {
       card: 'summary_large_image',
