@@ -1,18 +1,57 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 // COMPONENTS
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 import PrimaryButton from '@/app/components/buttons/PrimaryButton';
+import InputText from '@/app/components/inputs/InputText';
+import Alert from '@/app/components/Alert';
+import { InformationCircleIcon } from '@heroicons/react/20/solid';
+import Tooltip from '@/app/components/Tooltip';
 // TYPES
 import { FileObject } from '@/app/types';
 // UTILS
 import formatPrice from '@/app/utils/formatPrice';
 import formatFileSize from '@/app/utils/formatFileSize';
+import FileSaver from 'file-saver';
+import { downloadFile, getL402Header, parseL402Header } from '@/app/utils/downloadFile';
 
 const FileComponent = ({ file }: { file: FileObject }) => {
+  const [credentials, setCredentials] = useState('');
+  const [isValidCredentials, setIsValidCredentials] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
+  const [successAlert, setSuccessAlert] = useState(false);
+
+  useEffect(() => {
+    // Basic format check: should be "string:string"
+    const isValid = /^[^:]+:[^:]+$/.test(credentials.trim());
+    setIsValidCredentials(isValid);
+  }, [credentials]);
+
+  const handleCredentialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCredentials(e.target.value);
+  };
+
+  const handleRetrieveFile = async () => {
+    if (!isValidCredentials) {
+      setErrorAlert(true);
+      return;
+    }
+
+    const [macaroon, preimage] = credentials.split(':');
+
+    try {
+      const blob = await downloadFile(file.external_id, macaroon, preimage);
+      FileSaver.saveAs(blob, file.file_name);
+      setSuccessAlert(true);
+    } catch (error) {
+      console.error('File retrieval failed:', error);
+      setErrorAlert(true);
+    }
+  };
+
   return (
     <div
       className={
@@ -132,16 +171,74 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                   </span>
                 </div>
               </div>
-              <div className={'w-full'}>
+              <div className={'w-full flex flex-col space-y-4'}>
                 <PrimaryButton
                   buttonText={'Buy'}
                   link={`/billing/${file.external_id}`}
                 />
+                <div className="flex items-center justify-center">
+                  <div className="flex-grow border-t border-gray-300"></div>
+                  <span className="mx-4 flex-shrink text-gray-500 text-sm">or</span>
+                  <div className="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600 text-center">
+                    Pay with Hub and get instant access to your file:
+                  </p>
+                  <PrimaryButton
+                    buttonText={'Pay with Hub'}
+                    link={`http://app.paywithhub.com/purchases?l402_url=${encodeURIComponent(`${process.env.API_URL}/v0/storage/download/${file.external_id}`)}`}
+                    openInNewTab={true}
+                  />
+                </div>
+                <div className="flex items-center justify-center">
+                  <div className="flex-grow border-t border-gray-300"></div>
+                  <span className="mx-4 flex-shrink text-gray-500 text-sm">or</span>
+                  <div className="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div className="space-y-2 relative">
+                  <p className="text-sm text-gray-600 text-center flex items-center justify-center">
+                    After paying with Hub, enter the provided credentials here:
+                    <Tooltip content="Credentials are provided by Hub after payment. They should look like 'macaroon:preimage'">
+                      <InformationCircleIcon className="inline-block w-4 h-4 ml-1 text-gray-400" />
+                    </Tooltip>
+                  </p>
+                  <InputText
+                    type="text"
+                    name="credentials"
+                    placeholder="Enter credentials"
+                    value={credentials}
+                    onChange={handleCredentialsChange}
+                    isError={credentials !== '' && !isValidCredentials}
+                    errorText={credentials !== '' && !isValidCredentials ? "Invalid format. Should be 'macaroon:preimage'." : ""}
+                  />
+                  <PrimaryButton
+                    buttonText={'Download File'}
+                    action={handleRetrieveFile}
+                    disabled={!isValidCredentials}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
+      <Alert
+        open={successAlert}
+        onClose={() => setSuccessAlert(false)}
+        title={'File retrieved successfully'}
+        text={'Your file has been downloaded!'}
+        button={'Close'}
+        theme={'success'}
+      />
+      <Alert
+        open={errorAlert}
+        onClose={() => setErrorAlert(false)}
+        title={'File retrieval failed'}
+        text={'We could not retrieve the file. Please check your credentials and try again.'}
+        button={'Close'}
+        theme={'error'}
+      />
     </div>
   );
 };
