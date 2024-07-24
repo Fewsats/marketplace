@@ -172,30 +172,17 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                 </div>
               </div>
               <div className={'w-full flex flex-col space-y-4'}>
-                <PrimaryButton
-                  buttonText={'Buy'}
-                  link={`/billing/${file.external_id}`}
-                />
-                <div className="flex items-center justify-center">
-                  <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="mx-4 flex-shrink text-gray-500 text-sm">or</span>
-                  <div className="flex-grow border-t border-gray-300"></div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600 text-center">
-                    Pay with Hub and get instant access to your file:
-                  </p>
+              
+              {/* <p className="text-sm text-gray-600 text-center">
+                    Pay this file using a credit card:
+                  </p> */}
                   <PrimaryButton
-                    buttonText={'Pay with Hub'}
+                    buttonText={'Pay with Hub (Credit Card)'}
                     link={`http://app.paywithhub.com/purchases?l402_url=${encodeURIComponent(`${process.env.API_URL}/v0/storage/download/${file.external_id}`)}`}
                     openInNewTab={true}
                   />
                 </div>
-                <div className="flex items-center justify-center">
-                  <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="mx-4 flex-shrink text-gray-500 text-sm">or</span>
-                  <div className="flex-grow border-t border-gray-300"></div>
-                </div>
+
                 <div className="space-y-2 relative">
                   <p className="text-sm text-gray-600 text-center flex items-center justify-center">
                     After paying with Hub, enter the provided credentials here:
@@ -216,6 +203,17 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                     buttonText={'Download File'}
                     action={handleRetrieveFile}
                     disabled={!isValidCredentials}
+                  />
+                <div className="flex items-center justify-center">
+                  <div className="flex-grow border-t border-gray-300"></div>
+                  <span className="mx-4 flex-shrink text-gray-500 text-sm">or</span>
+                  <div className="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div className="space-y-2">
+
+                  <PrimaryButton
+                    buttonText={'Connect your Lightning Wallet'}
+                    link={`/billing/${file.external_id}`}
                   />
                 </div>
               </div>
