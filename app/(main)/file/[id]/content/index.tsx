@@ -186,9 +186,6 @@ const FileComponent = ({ file }: { file: FileObject }) => {
                 <div className="space-y-2 relative">
                   <p className="text-sm text-gray-600 text-center flex items-center justify-center">
                     After paying with Hub, enter the provided credentials here:
-                    <Tooltip content="Credentials are provided by Hub after payment. They should look like 'macaroon:preimage'">
-                      <InformationCircleIcon className="inline-block w-4 h-4 ml-1 text-gray-400" />
-                    </Tooltip>
                   </p>
                   <InputText
                     type="text"
